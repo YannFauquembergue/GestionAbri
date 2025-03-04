@@ -1,0 +1,15 @@
+body {
+    background-color: salmon;
+    padding : 0px;
+}
+
+
+#title-text {
+    padding: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    border: 3px solid #FCB9B2;
+    font-family: 'Courier New', Courier, monospace;
+}
