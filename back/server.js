@@ -30,34 +30,34 @@ bddConnection.connect(
 );
 
 app.get(
-    '/Route1',
+    '/getUsers',
     (req, res) => {
         try {
-            bddConnection.query("SELECT * FROM Medecin", (err, results) => {
+            bddConnection.query("SELECT * FROM User", (err, results) => {
                 if (err) {
                     return res.status(500).send({ error: err.message });
                 }
                 res.json(results);
             });
         } catch (error) {
-            res.status(500).json({"mesage erreur de bdd":error});
+            res.status(500).json({"ERREUR BDD: ":error});
         }
     }
 )
 
 app.post(
-    '/AddMedecin',
+    '/addUser',
     (req, res) => {
         try {
-            const query = `INSERT INTO Medecin (nom, prenom) VALUES (?, ?)`;
-            bddConnection.query(query, [req.body.nom, req.body.prenom], (error, results) => {
+            const query = `INSERT INTO Utilisateur (nom, prenom, nickname, password) VALUES (?, ?, ?, ?)`;
+            bddConnection.query(query, [req.body.nom, req.body.prenom, req.body.nickname, req.body.password], (error, results) => {
                 if (error) {
                     return res.status(500).json({ error: error.message });
                 }
                 res.json(results);
             });
         } catch (error) {
-            res.status(500).json({"Message erreur de bdd ":error});
+            res.status(500).json({"ERREUR BDD: ":error});
         }
     }
 );
