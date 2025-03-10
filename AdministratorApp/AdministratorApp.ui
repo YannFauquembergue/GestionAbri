@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>511</width>
-    <height>592</height>
+    <width>750</width>
+    <height>598</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,7 +88,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QLabel" name="notConnectedLabel">
@@ -208,11 +208,11 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QPushButton" name="submitButton">
+      <widget class="QPushButton" name="addUserButton">
        <property name="geometry">
         <rect>
          <x>40</x>
-         <y>130</y>
+         <y>210</y>
          <width>151</width>
          <height>31</height>
         </rect>
@@ -221,8 +221,94 @@
         <string>Enregistrer</string>
        </property>
       </widget>
+      <widget class="QLineEdit" name="rfidLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>180</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="passwordLabel">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>160</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Mot de passe</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="passwordLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>180</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="rfidLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>160</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Numéro RFID</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
      </widget>
     </widget>
+   </widget>
+   <widget class="QListWidget" name="logList">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>20</y>
+      <width>231</width>
+      <height>511</height>
+     </rect>
+    </property>
+    <property name="autoScroll">
+     <bool>true</bool>
+    </property>
+    <property name="movement">
+     <enum>QListView::Static</enum>
+    </property>
+    <property name="isWrapping" stdset="0">
+     <bool>false</bool>
+    </property>
+    <property name="spacing">
+     <number>2</number>
+    </property>
+    <property name="viewMode">
+     <enum>QListView::ListMode</enum>
+    </property>
+    <property name="uniformItemSizes">
+     <bool>false</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -230,7 +316,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>511</width>
+     <width>750</width>
      <height>20</height>
     </rect>
    </property>
@@ -266,8 +352,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>addUserButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AdministratorAppClass</receiver>
+   <slot>AddUser()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>351</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>298</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>ConnectToDatabase()</slot>
+  <slot>AddUser()</slot>
  </slots>
 </ui>

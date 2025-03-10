@@ -2,8 +2,6 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_AdministratorApp.h"
-#include "QSerialPort"
-#include "qserialportinfo.h"
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -19,10 +17,10 @@ public:
 
 private:
     Ui::AdministratorAppClass ui;
-
-    QSerialPort* port;
     QSqlDatabase database;
 
 public slots:
     void ConnectToDatabase();
+
+    void AddUser();
 };

@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+
 AdministratorApp::AdministratorApp(QWidget* parent)
     : QMainWindow(parent)
 {
@@ -30,7 +31,7 @@ void AdministratorApp::ConnectToDatabase()
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
     QJsonObject obj = doc.object();
 
-    QSqlDatabase database = QSqlDatabase::addDatabase("QMYSQL");
+    database = QSqlDatabase::addDatabase("QMYSQL");
     database.setHostName(obj["host"].toString());
     database.setPort(obj["port"].toInt());
     database.setDatabaseName(obj["database"].toString());
@@ -39,8 +40,31 @@ void AdministratorApp::ConnectToDatabase()
 
     if (!database.open())
     {
-        ui.statusLine->setText("ERROR: " + database.lastError().text());
+        ui.stackedWidget->setCurrentIndex(0);
+        ui.statusLine->setText("Disconnected");
+        ui.logList->addItem("ERREUR: Connexion a la BDD impossible: " + database.lastError().text());
         return;
     }
+    ui.stackedWidget->setCurrentIndex(1);
     ui.statusLine->setText("Connected");
+    ui.connectButton->setEnabled(false);
+    ui.logList->addItem("Connexion a la BDD etablie !");
+}
+
+void AdministratorApp::AddUser()
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO Utilisateur (nom, prenom, nickname, password, rfid) VALUES (:nom, :prenom, :nickname, :password, :rfid)");
+    query.bindValue(":nom", ui.nomLineEdit->text());
+    query.bindValue(":prenom", ui.prenomLineEdit->text());
+    query.bindValue(":nickname", ui.nicknameLineEdit->text());
+    query.bindValue(":password", ui.passwordLineEdit->text());
+    query.bindValue(":rfid", ui.rfidLineEdit->text());
+
+    if (!query.exec())
+    {
+        ui.logList->addItem("ERREUR: Ajout de l'utilisateur impossible: " + query.lastError().text());
+        return;
+    }
+    ui.logList->addItem("L'utilisateur " + ui.nicknameLineEdit->text() + " a ete ajoute avec succes !");
 }
