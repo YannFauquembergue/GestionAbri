@@ -1,0 +1,10 @@
+﻿   Qt/MSBuild: 3.3.1.1
+  Reading Qt configuration (C:/Qt/Qt5.14.2/5.14.2/msvc2017_64/bin/qmake)
+   Qt: 5.14.2
+  rcc AdministratorApp.qrc
+   RCC: Warning: No resources in 'C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\AdministratorApp.qrc'.
+  AdministratorApp.cpp
+  main.cpp
+  moc_AdministratorApp.cpp
+  qrc_AdministratorApp.cpp
+  AdministratorApp.vcxproj -> C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.exe
