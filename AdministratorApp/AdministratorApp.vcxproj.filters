@@ -41,7 +41,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+<<<<<<< HEAD
   <ItemGroup>
     <None Include="config.json" />
   </ItemGroup>
+=======
+>>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
 </Project>
