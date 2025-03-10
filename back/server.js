@@ -33,7 +33,7 @@ app.get(
     '/getUsers',
     (req, res) => {
         try {
-            bddConnection.query("SELECT * FROM User", (err, results) => {
+            bddConnection.query("SELECT * FROM Utilisateur", (err, results) => {
                 if (err) {
                     return res.status(500).send({ error: err.message });
                 }
