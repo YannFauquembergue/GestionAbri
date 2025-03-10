@@ -6,29 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-<<<<<<< HEAD
     <width>511</width>
     <height>592</height>
-=======
-    <width>464</width>
-    <height>624</height>
->>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
    </rect>
   </property>
   <property name="windowTitle">
    <string>AdministratorApp</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="connectBox">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
-<<<<<<< HEAD
       <width>491</width>
-=======
-      <width>441</width>
->>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
       <height>141</height>
      </rect>
     </property>
@@ -38,11 +29,7 @@
     <widget class="QPushButton" name="connectButton">
      <property name="geometry">
       <rect>
-<<<<<<< HEAD
        <x>170</x>
-=======
-       <x>130</x>
->>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
        <y>30</y>
        <width>161</width>
        <height>41</height>
@@ -79,11 +66,7 @@
       <rect>
        <x>10</x>
        <y>100</y>
-<<<<<<< HEAD
        <width>471</width>
-=======
-       <width>421</width>
->>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
        <height>31</height>
       </rect>
      </property>
@@ -95,7 +78,6 @@
      </property>
     </widget>
    </widget>
-<<<<<<< HEAD
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
@@ -133,7 +115,7 @@
      </widget>
     </widget>
     <widget class="QWidget" name="page_2">
-     <widget class="QGroupBox" name="groupBox_2">
+     <widget class="QGroupBox" name="addUserBox">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -145,7 +127,7 @@
       <property name="title">
        <string>Ajouter un utilisateur</string>
       </property>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="nomLabel">
        <property name="geometry">
         <rect>
          <x>30</x>
@@ -161,7 +143,7 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QLineEdit" name="nomLineEdit">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -174,7 +156,7 @@
         <string/>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit_2">
+      <widget class="QLineEdit" name="prenomLineEdit">
        <property name="geometry">
         <rect>
          <x>120</x>
@@ -184,7 +166,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="prenomLabel">
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -200,7 +182,7 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit_3">
+      <widget class="QLineEdit" name="nicknameLineEdit">
        <property name="geometry">
         <rect>
          <x>60</x>
@@ -210,7 +192,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="nicknameLabel">
        <property name="geometry">
         <rect>
          <x>60</x>
@@ -226,7 +208,7 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="submitButton">
        <property name="geometry">
         <rect>
          <x>40</x>
@@ -242,19 +224,13 @@
      </widget>
     </widget>
    </widget>
-=======
->>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-<<<<<<< HEAD
      <width>511</width>
-=======
-     <width>464</width>
->>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
      <height>20</height>
     </rect>
    </property>
@@ -281,21 +257,12 @@
    <slot>ConnectToDatabase()</slot>
    <hints>
     <hint type="sourcelabel">
-<<<<<<< HEAD
      <x>260</x>
      <y>97</y>
     </hint>
     <hint type="destinationlabel">
      <x>255</x>
      <y>295</y>
-=======
-     <x>220</x>
-     <y>97</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>231</x>
-     <y>311</y>
->>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
     </hint>
    </hints>
   </connection>
