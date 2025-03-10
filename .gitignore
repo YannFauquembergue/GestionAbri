@@ -1,3 +1,10 @@
 .env
 node_modules
 phpMyAdmin
+
+config.json
+.vs/
+*.suo
+*.db
+*.sqlite
+ipch/
