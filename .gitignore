@@ -1,3 +1,13 @@
 .env
 node_modules
 phpMyAdmin
+
+<<<<<<< HEAD
+config.json
+=======
+>>>>>>> b7b0282154c8f16d8f05aa5a19d8edb3c05fdc63
+.vs/
+*.suo
+*.db
+*.sqlite
+ipch/
