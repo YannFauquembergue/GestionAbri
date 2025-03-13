@@ -30,11 +30,13 @@ bddConnection.connect(
 );
 
 app.get('/getUsers', (req, res) => {
+    console.log("Tentative de récupération des utilisateurs")
     try {
         bddConnection.query("SELECT * FROM Utilisateur", (err, results) => {
             if (err) {
                 return res.status(500).send({ error: err.message });
             }
+            console.log("Utilisateurs récupérés avec succès.")
             res.json(results);
         });
     } catch (error) {
