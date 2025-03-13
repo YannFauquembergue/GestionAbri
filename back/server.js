@@ -46,7 +46,7 @@ app.get('/getUsers', (req, res) => {
 
 app.get('/test', (req, res) => {
     console.log("Route test appelée")
-    res.json({ message: "Réception test" });
+    res.json({ message: "Réception test !" });
 });
 
 app.post('/addUser', (req, res) => {
