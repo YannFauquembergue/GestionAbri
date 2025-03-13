@@ -29,36 +29,37 @@ bddConnection.connect(
     function (err) { if (err) throw err; console.log("Connexion à la BDD réussie"); }
 );
 
-app.get(
-    '/getUsers',
-    (req, res) => {
-        try {
-            bddConnection.query("SELECT * FROM Utilisateur", (err, results) => {
-                if (err) {
-                    return res.status(500).send({ error: err.message });
-                }
-                res.json(results);
-            });
-        } catch (error) {
-            res.status(500).json({"ERREUR BDD: ":error});
-        }
+app.get('/getUsers', (req, res) => {
+    try {
+        bddConnection.query("SELECT * FROM Utilisateur", (err, results) => {
+            if (err) {
+                return res.status(500).send({ error: err.message });
+            }
+            res.json(results);
+        });
+    } catch (error) {
+        res.status(500).json({"ERREUR SQL: ":error});
     }
-)
+})
 
-app.post(
-    '/addUser',
-    (req, res) => {
-        try {
-            const query = `INSERT INTO Utilisateur (nom, prenom, nickname, password) VALUES (?, ?, ?, ?)`;
-            bddConnection.query(query, [req.body.nom, req.body.prenom, req.body.nickname, req.body.password], (error, results) => {
-                if (error) {
-                    return res.status(500).json({ error: error.message });
-                }
-                res.json(results);
-            });
-        } catch (error) {
-            res.status(500).json({"ERREUR BDD: ":error});
-        }
+app.get('/test', (req, res) => {
+    console.log("Route test appelée")
+    res.json({ message: "Réception test" });
+});
+
+app.post('/addUser', (req, res) => {
+    console.log("Tentative d'ajout d'un utilisateur")
+    try {
+        const query = `INSERT INTO Utilisateur (nom, prenom, nickname, password, rfid) VALUES (?, ?, ?, ?, ?)`;
+        bddConnection.query(query, [req.body.nom, req.body.prenom, req.body.nickname, req.body.password, req.body.rfid], (error, results) => {
+            if (error) {
+                return res.status(500).json({ error: error.message });
+            }
+            console.log("Utilisateur " + req.body.nickname + " ajouté avec succès");
+            res.json(results);
+        });
+    } catch (error) {
+       res.status(500).json({"ERREUR SQL: ":error});
     }
-);
+});
 
