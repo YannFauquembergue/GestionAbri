@@ -23,7 +23,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_AdministratorApp_t {
     QByteArrayData data[4];
-    char stringdata0[44];
+    char stringdata0[37];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,13 +33,12 @@ struct qt_meta_stringdata_AdministratorApp_t {
 static const qt_meta_stringdata_AdministratorApp_t qt_meta_stringdata_AdministratorApp = {
     {
 QT_MOC_LITERAL(0, 0, 16), // "AdministratorApp"
-QT_MOC_LITERAL(1, 17, 17), // "ConnectToDatabase"
-QT_MOC_LITERAL(2, 35, 0), // ""
-QT_MOC_LITERAL(3, 36, 7) // "AddUser"
+QT_MOC_LITERAL(1, 17, 10), // "FetchUsers"
+QT_MOC_LITERAL(2, 28, 0), // ""
+QT_MOC_LITERAL(3, 29, 7) // "AddUser"
 
     },
-    "AdministratorApp\0ConnectToDatabase\0\0"
-    "AddUser"
+    "AdministratorApp\0FetchUsers\0\0AddUser"
 };
 #undef QT_MOC_LITERAL
 
@@ -73,7 +72,7 @@ void AdministratorApp::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
         auto *_t = static_cast<AdministratorApp *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->ConnectToDatabase(); break;
+        case 0: _t->FetchUsers(); break;
         case 1: _t->AddUser(); break;
         default: ;
         }

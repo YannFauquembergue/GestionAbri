@@ -1,4 +1,7 @@
 ﻿   Qt/MSBuild: 3.3.1.1
    Qt: 5.14.2
+  moc AdministratorApp.h
   AdministratorApp.cpp
+  main.cpp
+  moc_AdministratorApp.cpp
   AdministratorApp.vcxproj -> C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.exe

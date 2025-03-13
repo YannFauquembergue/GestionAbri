@@ -92,6 +92,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="APIManager.cpp" />
+    <ClCompile Include="RFIDReader.cpp" />
+    <ClCompile Include="User.cpp" />
     <QtRcc Include="AdministratorApp.qrc" />
     <QtUic Include="AdministratorApp.ui" />
     <QtMoc Include="AdministratorApp.h" />
@@ -100,6 +103,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="APIManager.h" />
+    <ClInclude Include="RFIDReader.h" />
+    <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

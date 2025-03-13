@@ -2,6 +2,19 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_AdministratorApp.h"
+#include "RFIDReader.h"
+#include "APIManager.h"
+
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrl>
+
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -17,10 +30,11 @@ public:
 
 private:
     Ui::AdministratorAppClass ui;
-    QSqlDatabase database;
+    RFIDReader * rfidReader;
+    APIManager* api;
+    void GetUserInfo();
 
 public slots:
-    void ConnectToDatabase();
-
+    void FetchUsers();
     void AddUser();
 };
