@@ -1,16 +1,21 @@
+#pragma once
 #include <QObject>
 #include <QTimer>
 
-#pragma once
 class RFIDReader : public QObject
 {
+    Q_OBJECT
+
 private:
-	QTimer timer;
+    QTimer* timer;
 
 public:
-	void onRFIDRead(QString data);
+    RFIDReader(QObject* parent = nullptr);
+    ~RFIDReader();
 
 public slots:
-	void readData();
-};
+    void readData();
 
+signals:
+    void onRFIDRead(QString data);
+};

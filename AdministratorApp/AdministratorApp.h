@@ -15,9 +15,6 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
 #include <QDebug>
 
 class AdministratorApp : public QMainWindow
@@ -32,9 +29,13 @@ private:
     Ui::AdministratorAppClass ui;
     RFIDReader * rfidReader;
     APIManager* api;
-    void GetUserInfo();
+
+    QList<User*> users;
+
+    void FetchUsers();
 
 public slots:
-    void FetchUsers();
+    void RefreshList();
     void AddUser();
+    void  OnUserComboSelect(int i);
 };

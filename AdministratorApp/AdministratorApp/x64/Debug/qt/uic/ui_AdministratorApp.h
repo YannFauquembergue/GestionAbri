@@ -45,6 +45,7 @@ public:
     QLabel *userComboLabel;
     QPushButton *refreshComboButton;
     QComboBox *userCombo;
+    QLabel *logLabel;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -58,11 +59,11 @@ public:
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         logList = new QListWidget(centralWidget);
         logList->setObjectName(QString::fromUtf8("logList"));
-        logList->setGeometry(QRect(410, 10, 231, 501));
+        logList->setGeometry(QRect(410, 30, 231, 481));
         logList->setAutoScroll(true);
         logList->setMovement(QListView::Static);
         logList->setProperty("isWrapping", QVariant(false));
-        logList->setSpacing(2);
+        logList->setSpacing(1);
         logList->setViewMode(QListView::ListMode);
         logList->setUniformItemSizes(false);
         logList->setWordWrap(true);
@@ -119,6 +120,9 @@ public:
         userCombo->addItem(QString());
         userCombo->setObjectName(QString::fromUtf8("userCombo"));
         userCombo->setGeometry(QRect(40, 280, 151, 31));
+        logLabel = new QLabel(centralWidget);
+        logLabel->setObjectName(QString::fromUtf8("logLabel"));
+        logLabel->setGeometry(QRect(416, 10, 221, 21));
         AdministratorAppClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AdministratorAppClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -133,6 +137,8 @@ public:
 
         retranslateUi(AdministratorAppClass);
         QObject::connect(addUserButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(AddUser()));
+        QObject::connect(userCombo, SIGNAL(currentIndexChanged(int)), AdministratorAppClass, SLOT(OnUserComboSelect(int)));
+        QObject::connect(refreshComboButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(RefreshList()));
 
         QMetaObject::connectSlotsByName(AdministratorAppClass);
     } // setupUi
@@ -154,6 +160,7 @@ public:
         refreshComboButton->setText(QCoreApplication::translate("AdministratorAppClass", "Actualiser", nullptr));
         userCombo->setItemText(0, QCoreApplication::translate("AdministratorAppClass", "Nouvel utilisateur", nullptr));
 
+        logLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Log", nullptr));
     } // retranslateUi
 
 };

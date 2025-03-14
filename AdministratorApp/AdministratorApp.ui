@@ -18,9 +18,9 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>10</y>
+      <y>30</y>
       <width>231</width>
-      <height>501</height>
+      <height>481</height>
      </rect>
     </property>
     <property name="autoScroll">
@@ -33,7 +33,7 @@
      <bool>false</bool>
     </property>
     <property name="spacing">
-     <number>2</number>
+     <number>1</number>
     </property>
     <property name="viewMode">
      <enum>QListView::ListMode</enum>
@@ -257,6 +257,19 @@
      </item>
     </widget>
    </widget>
+   <widget class="QLabel" name="logLabel">
+    <property name="geometry">
+     <rect>
+      <x>416</x>
+      <y>10</y>
+      <width>221</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Log</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -299,10 +312,42 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>userCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>AdministratorAppClass</receiver>
+   <slot>OnUserComboSelect(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>324</x>
+     <y>298</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>refreshComboButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AdministratorAppClass</receiver>
+   <slot>RefreshList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>382</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>324</x>
+     <y>298</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>UpdateUser()</slot>
+  <slot>RefreshList()</slot>
   <slot>AddUser()</slot>
-  <slot>SendRequest()</slot>
+  <slot>OnUserComboSelect(int)</slot>
  </slots>
 </ui>

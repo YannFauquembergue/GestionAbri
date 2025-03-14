@@ -106,7 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APIManager.h" />
-    <ClInclude Include="RFIDReader.h" />
+    <QtMoc Include="RFIDReader.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

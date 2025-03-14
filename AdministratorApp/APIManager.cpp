@@ -30,7 +30,7 @@ User* APIManager::loadUser(int id)
                 obj["password"].toString(),
                 obj["id"].toInt()
             );
-            qDebug() << "Utilisateur chargé : " << user->nickname;
+            qDebug() << "Utilisateur chargé : " << user->getNickname();
         }
         else {
             qDebug() << "Erreur lors de la récupération de l'utilisateur : " << reply->errorString();
@@ -82,8 +82,38 @@ QList<User*> APIManager::loadUsers()
     return users;
 }
 
-
-bool APIManager::saveUser(User*)
+bool APIManager::saveUser(User* user)
 {
-	return false;
+    if (!user) {
+        qDebug() << "Utilisateur invalide, annulation de l'enregistrement.";
+        return false;
+    }
+
+    QNetworkRequest request(QUrl(QString("http://%1:%2/addUser").arg(ip).arg(port)));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject userObj;
+    userObj["prenom"] = user->getPrenom();
+    userObj["nom"] = user->getNom();
+    userObj["nickname"] = user->getNickname();
+    userObj["rfid"] = user->getRFID();
+    userObj["password"] = user->getPassword();
+    userObj["id"] = user->getId();
+
+    QJsonDocument jsonDoc(userObj);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    QNetworkReply* reply = accessManager->post(request, jsonData);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    bool success = false;
+    if (reply->error() == QNetworkReply::NoError) {
+        success = true;
+    }
+
+    reply->deleteLater();
+    return success;
 }
