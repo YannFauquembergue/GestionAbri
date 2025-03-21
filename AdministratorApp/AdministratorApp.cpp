@@ -16,6 +16,8 @@ AdministratorApp::AdministratorApp(QWidget* parent)
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
     QJsonObject obj = doc.object();
     api = new APIManager(obj["host"].toString(), obj["port"].toInt());
+
+    ListAvailablePorts();
     FetchUsers();
 }
 
@@ -23,10 +25,17 @@ AdministratorApp::~AdministratorApp()
 {
 }
 
-void AdministratorApp::RefreshList()
+void AdministratorApp::RefreshUserList()
 {
     ui.logList->addItem("Actualisation de la liste des utilisateurs");
     FetchUsers();
+}
+
+void AdministratorApp::ListAvailablePorts()
+{
+    foreach(const QSerialPortInfo &portInfo, QSerialPortInfo::availablePorts()) {
+        ui.moduleCombo->addItem(portInfo.portName());
+    }
 }
 
 void AdministratorApp::FetchUsers()
@@ -39,6 +48,10 @@ void AdministratorApp::FetchUsers()
         ui.userCombo->addItem(users[i]->getNickname() + " (" + QString::number(users[i]->getId()) + ")");
     }
     ui.logList->addItem(QString("%1 utilisateurs trouves").arg(users.size()));
+    if (users.size() <= 0)
+    {
+        ui.logList->addItem(QString("Le serveur est-il demarre ?").arg(users.size()));
+    }
 }
 
 void AdministratorApp::AddUser()
@@ -82,4 +95,31 @@ void AdministratorApp::OnUserComboSelect(int i)
         ui.rfidLineEdit->clear();
         ui.passwordLineEdit->clear();
     }
+}
+
+void AdministratorApp::OpenPort()
+{
+    if (ui.moduleCombo->currentIndex() >= 0)
+    {
+        port = new QSerialPort(ui.moduleCombo->currentText());
+        QObject::connect(port, SIGNAL(readyRead()), this, SLOT(OnSerialPortReadyRead()));
+        port->setBaudRate(QSerialPort::Baud9600);
+        port->setDataBits(QSerialPort::DataBits::Data8);
+        port->setParity(QSerialPort::Parity::NoParity);
+        port->setStopBits(QSerialPort::StopBits::OneStop);
+        if (port->open(QIODevice::OpenModeFlag::ExistingOnly | QIODevice::OpenModeFlag::ReadWrite))
+        {
+            ui.logList->addItem("Port " + port->portName() + " ouvert !");
+        }
+        else
+        {
+            ui.logList->addItem("Echec de l'ouverture du port");
+        }
+    }
+}
+
+void AdministratorApp::OnSerialPortReadyRead()
+{
+    QByteArray data = port->read(port->bytesAvailable());
+    QString str(data);
 }

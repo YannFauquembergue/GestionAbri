@@ -46,6 +46,10 @@ public:
     QPushButton *refreshComboButton;
     QComboBox *userCombo;
     QLabel *logLabel;
+    QGroupBox *moduleBox;
+    QLabel *moduleLabel;
+    QComboBox *moduleCombo;
+    QPushButton *openPortButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -54,12 +58,12 @@ public:
     {
         if (AdministratorAppClass->objectName().isEmpty())
             AdministratorAppClass->setObjectName(QString::fromUtf8("AdministratorAppClass"));
-        AdministratorAppClass->resize(650, 598);
+        AdministratorAppClass->resize(730, 438);
         centralWidget = new QWidget(AdministratorAppClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         logList = new QListWidget(centralWidget);
         logList->setObjectName(QString::fromUtf8("logList"));
-        logList->setGeometry(QRect(410, 30, 231, 481));
+        logList->setGeometry(QRect(490, 30, 231, 341));
         logList->setAutoScroll(true);
         logList->setMovement(QListView::Static);
         logList->setProperty("isWrapping", QVariant(false));
@@ -69,7 +73,7 @@ public:
         logList->setWordWrap(true);
         addUserBox = new QGroupBox(centralWidget);
         addUserBox->setObjectName(QString::fromUtf8("addUserBox"));
-        addUserBox->setGeometry(QRect(10, 10, 231, 501));
+        addUserBox->setGeometry(QRect(10, 10, 231, 361));
         nomLabel = new QLabel(addUserBox);
         nomLabel->setObjectName(QString::fromUtf8("nomLabel"));
         nomLabel->setGeometry(QRect(30, 30, 61, 21));
@@ -122,11 +126,24 @@ public:
         userCombo->setGeometry(QRect(40, 280, 151, 31));
         logLabel = new QLabel(centralWidget);
         logLabel->setObjectName(QString::fromUtf8("logLabel"));
-        logLabel->setGeometry(QRect(416, 10, 221, 21));
+        logLabel->setGeometry(QRect(496, 10, 221, 21));
+        moduleBox = new QGroupBox(centralWidget);
+        moduleBox->setObjectName(QString::fromUtf8("moduleBox"));
+        moduleBox->setGeometry(QRect(250, 10, 231, 361));
+        moduleLabel = new QLabel(moduleBox);
+        moduleLabel->setObjectName(QString::fromUtf8("moduleLabel"));
+        moduleLabel->setGeometry(QRect(40, 30, 151, 21));
+        moduleLabel->setAlignment(Qt::AlignCenter);
+        moduleCombo = new QComboBox(moduleBox);
+        moduleCombo->setObjectName(QString::fromUtf8("moduleCombo"));
+        moduleCombo->setGeometry(QRect(40, 50, 151, 31));
+        openPortButton = new QPushButton(moduleBox);
+        openPortButton->setObjectName(QString::fromUtf8("openPortButton"));
+        openPortButton->setGeometry(QRect(40, 90, 151, 31));
         AdministratorAppClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AdministratorAppClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 650, 20));
+        menuBar->setGeometry(QRect(0, 0, 730, 20));
         AdministratorAppClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AdministratorAppClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -138,7 +155,8 @@ public:
         retranslateUi(AdministratorAppClass);
         QObject::connect(addUserButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(AddUser()));
         QObject::connect(userCombo, SIGNAL(currentIndexChanged(int)), AdministratorAppClass, SLOT(OnUserComboSelect(int)));
-        QObject::connect(refreshComboButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(RefreshList()));
+        QObject::connect(refreshComboButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(RefreshUserList()));
+        QObject::connect(openPortButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(OpenPort()));
 
         QMetaObject::connectSlotsByName(AdministratorAppClass);
     } // setupUi
@@ -161,6 +179,9 @@ public:
         userCombo->setItemText(0, QCoreApplication::translate("AdministratorAppClass", "Nouvel utilisateur", nullptr));
 
         logLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Log", nullptr));
+        moduleBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Modules USB", nullptr));
+        moduleLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Port", nullptr));
+        openPortButton->setText(QCoreApplication::translate("AdministratorAppClass", "Ouvrir port", nullptr));
     } // retranslateUi
 
 };

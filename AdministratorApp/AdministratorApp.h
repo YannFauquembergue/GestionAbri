@@ -15,6 +15,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include <QSerialPort>
+#include <QSerialPortInfo>
+
 #include <QDebug>
 
 class AdministratorApp : public QMainWindow
@@ -30,12 +33,17 @@ private:
     RFIDReader * rfidReader;
     APIManager* api;
 
+    QSerialPort* port;
     QList<User*> users;
 
+    void ListAvailablePorts();
     void FetchUsers();
 
 public slots:
-    void RefreshList();
+    void RefreshUserList();
     void AddUser();
     void  OnUserComboSelect(int i);
+    void OpenPort();
+
+    void OnSerialPortReadyRead();
 };
