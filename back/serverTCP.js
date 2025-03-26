@@ -30,13 +30,13 @@ const server = net.createServer((socket) => {
             const [kwSolaire, kwEDF] = message.split(",");
             console.log(`Reçu: kwSolaire=${kwSolaire}, kwEDF=${kwEDF}`);
 
-            const query = "INSERT INTO Consommation (kwSolaire, kwEDF) VALUES (?, ?)";
+            const query = "UPDATE Consommation SET kwSolaire = ?, kwEDF = ? LIMIT 1";
             bddConnection.query(query, [kwSolaire, kwEDF], (err) => {
                 if (err) {
                     console.error("Erreur SQL:", err);
                     socket.write("Erreur SQL\n");
                 } else {
-                    console.log("Données insérées en BDD");
+                    console.log("Données mises à jour en BDD");
                     socket.write("Données reçues et stockées\n");
                 }
             });
@@ -55,6 +55,22 @@ const server = net.createServer((socket) => {
     });
 });
 
+function afficherConsommation() {
+    const query = "SELECT kwSolaire, kwEDF FROM Consommation LIMIT 1";
+    bddConnection.query(query, (err, results) => {
+        if (err) {
+            console.error("Erreur lors de la récupération des données:", err);
+            return;
+        }
+        if (results.length > 0) {
+            console.log(`Valeurs actuelles: kwSolaire=${results[0].kwSolaire}, kwEDF=${results[0].kwEDF}`);
+        } else {
+            console.log("Aucune donnée disponible");
+        }
+    });
+}
+
 server.listen(PORT, () => {
     console.log(`Serveur TCP en écoute sur le port ${PORT}`);
+    setInterval(afficherConsommation, 5000);
 });
