@@ -11,17 +11,15 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Limite de requêtes (anti-spam)
 const limiter = rateLimit({
-    windowMs: 1000, // 1 seconde
-    max: 10, // 10 requêtes max par seconde
+    windowMs: 1000, 
+    max: 10, 
     message: { error: "Trop de requêtes, veuillez réessayer plus tard." }
 });
 app.use(limiter);
 
 const port = 8080;
 
-// Connexion à la BDD avec mysql2 (meilleure gestion des promesses)
 const bddConnection = mysql.createConnection({
     host: process.env.BDD_HOST,
     database: process.env.BDD_DATABASE,
@@ -31,10 +29,9 @@ const bddConnection = mysql.createConnection({
 
 bddConnection.connect((err) => {
     if (err) throw err;
-    console.log("🚀 Connexion à la BDD établie");
+    console.log("Connexion à la BDD établie");
 });
 
-// Middleware d'authentification par token
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) return res.status(403).json({ error: "Accès refusé, token manquant" });
@@ -46,14 +43,13 @@ const verifyToken = (req, res, next) => {
     });
 };
 
-// Récupérer un utilisateur par ID
 app.get('/getUser/:id', verifyToken, (req, res) => {
     const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
         return res.status(400).json({ error: "ID utilisateur invalide" });
     }
 
-    console.log(`🔍 Tentative de récupération de l'utilisateur ID: ${userId}`);
+    console.log(`Tentative de récupération de l'utilisateur ID: ${userId}`);
     
     const query = "SELECT * FROM Utilisateur WHERE id = ?";
     bddConnection.query(query, [userId], (err, results) => {
@@ -63,9 +59,8 @@ app.get('/getUser/:id', verifyToken, (req, res) => {
     });
 });
 
-// Récupérer tous les utilisateurs
 app.get('/getUsers', verifyToken, (req, res) => {
-    console.log("🔍 Tentative de récupération de tous les utilisateurs");
+    console.log("Tentative de récupération de tous les utilisateurs");
     
     const query = "SELECT * FROM Utilisateur";
     bddConnection.query(query, (err, results) => {
@@ -74,15 +69,13 @@ app.get('/getUsers', verifyToken, (req, res) => {
     });
 });
 
-// Route test
 app.get('/test', (req, res) => {
-    console.log("📡 Route test appelée");
+    console.log("Route test appelée");
     res.json({ message: "Réception test !" });
 });
 
-// Ajouter ou mettre à jour un utilisateur
 app.post('/addUser', verifyToken, (req, res) => {
-    console.log("➕ Tentative d'ajout ou mise à jour d'un utilisateur");
+    console.log("Tentative d'ajout ou mise à jour d'un utilisateur");
     
     const { nom, prenom, nickname, password, rfid } = req.body;
     if (!nom || !prenom || !nickname || !password || !rfid) {
@@ -97,21 +90,21 @@ app.post('/addUser', verifyToken, (req, res) => {
             const updateQuery = "UPDATE Utilisateur SET nom = ?, prenom = ?, password = ?, rfid = ? WHERE nickname = ?";
             bddConnection.query(updateQuery, [nom, prenom, password, rfid, nickname], (err) => {
                 if (err) return res.status(500).json({ error: err.message });
-                console.log(`✅ Utilisateur ${nickname} mis à jour`);
+                console.log(`Utilisateur ${nickname} mis à jour`);
                 res.json({ message: `Utilisateur ${nickname} mis à jour` });
             });
         } else {
             const insertQuery = "INSERT INTO Utilisateur (nom, prenom, nickname, password, rfid) VALUES (?, ?, ?, ?, ?)";
             bddConnection.query(insertQuery, [nom, prenom, nickname, password, rfid], (err) => {
                 if (err) return res.status(500).json({ error: err.message });
-                console.log(`✅ Utilisateur ${nickname} ajouté`);
+                console.log(`Utilisateur ${nickname} ajouté`);
                 res.json({ message: `Utilisateur ${nickname} ajouté` });
             });
         }
     });
 });
 
-// Démarrer le serveur
+
 app.listen(port, () => {
-    console.log(`🚀 Serveur démarré sur le port ${port}`);
+    console.log(`Serveur démarré sur le port ${port}`);
 });
