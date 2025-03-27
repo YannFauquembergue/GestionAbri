@@ -15,6 +15,6 @@ RFIDReader::~RFIDReader()
 
 void RFIDReader::readData()
 {
-    QString data = "123456789ABC"; // Données temporaires
+    QString data = "tempDATA"; // Données temporaires
     emit onRFIDRead(data);
 }

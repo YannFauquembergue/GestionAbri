@@ -1,11 +1,4 @@
 ﻿   Qt/MSBuild: 3.3.1.1
    Qt: 5.14.2
-  APIManager.cpp
   RFIDReader.cpp
-  User.cpp
-  AdministratorApp.cpp
-  main.cpp
-  qrc_AdministratorApp.cpp
-  moc_AdministratorApp.cpp
-  moc_RFIDReader.cpp
   AdministratorApp.vcxproj -> C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.exe

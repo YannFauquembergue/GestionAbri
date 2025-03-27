@@ -33,11 +33,9 @@ void AdministratorApp::RefreshUserList()
     FetchUsers();
 }
 
-void AdministratorApp::GetRFIDInfo()
+void AdministratorApp::GetRFIDInfo(QString info)
 {
-
-    QString rfidTag = "123456789ABC"; // Données simulées
-    AddElementToLogList("RFID reçu : " + rfidTag);
+    AddElementToLogList("RFID recu : " + info);
 
 }
 
