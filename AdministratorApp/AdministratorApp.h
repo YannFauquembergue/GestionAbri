@@ -36,8 +36,12 @@ private:
     QSerialPort* port;
     QList<User*> users;
 
+    void GetRFIDInfo();
+
     void ListAvailablePorts();
     void FetchUsers();
+
+    void AddElementToLogList(QString text);
 
 public slots:
     void RefreshUserList();

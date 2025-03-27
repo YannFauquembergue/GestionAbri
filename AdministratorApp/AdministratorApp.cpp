@@ -6,7 +6,7 @@ AdministratorApp::AdministratorApp(QWidget* parent)
     ui.setupUi(this);
     QFile file("config.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ui.logList->addItem("ERREUR: Lecture du fichier config impossible.");
+        AddElementToLogList("ERREUR: Lecture du fichier config impossible.");
         return;
     }
 
@@ -16,6 +16,8 @@ AdministratorApp::AdministratorApp(QWidget* parent)
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
     QJsonObject obj = doc.object();
     api = new APIManager(obj["host"].toString(), obj["port"].toInt());
+    rfidReader = new RFIDReader(this);
+    connect(rfidReader, &RFIDReader::onRFIDRead, this, &AdministratorApp::GetRFIDInfo);
 
     ListAvailablePorts();
     FetchUsers();
@@ -29,6 +31,14 @@ void AdministratorApp::RefreshUserList()
 {
     ui.logList->addItem("Actualisation de la liste des utilisateurs");
     FetchUsers();
+}
+
+void AdministratorApp::GetRFIDInfo()
+{
+
+    QString rfidTag = "123456789ABC"; // Données simulées
+    AddElementToLogList("RFID reçu : " + rfidTag);
+
 }
 
 void AdministratorApp::ListAvailablePorts()
@@ -47,11 +57,17 @@ void AdministratorApp::FetchUsers()
     {
         ui.userCombo->addItem(users[i]->getNickname() + " (" + QString::number(users[i]->getId()) + ")");
     }
-    ui.logList->addItem(QString("%1 utilisateurs trouves").arg(users.size()));
+    AddElementToLogList(QString("%1 utilisateurs trouves").arg(users.size()));
     if (users.size() <= 0)
     {
-        ui.logList->addItem(QString("Le serveur est-il demarre ?").arg(users.size()));
+        AddElementToLogList(QString("Le serveur est-il demarre ?").arg(users.size()));
     }
+}
+
+void AdministratorApp::AddElementToLogList(QString text)
+{
+    ui.logList->addItem(text);
+    ui.logList->scrollToBottom();
 }
 
 void AdministratorApp::AddUser()
@@ -65,12 +81,12 @@ void AdministratorApp::AddUser()
     );
     if (api->saveUser(user))
     {
-        ui.logList->addItem("L'utilisateur " + ui.nicknameLineEdit->text() + " a ete ajoute/modifie avec succes !");
+        AddElementToLogList("L'utilisateur " + ui.nicknameLineEdit->text() + " a ete ajoute/modifie avec succes !");
         FetchUsers();
     }
     else
     {
-        ui.logList->addItem("ERREUR: Echec de l'ajout/modification de l'utilisateur");
+        AddElementToLogList("ERREUR: Echec de l'ajout/modification de l'utilisateur");
     }
 }
 
@@ -109,17 +125,23 @@ void AdministratorApp::OpenPort()
         port->setStopBits(QSerialPort::StopBits::OneStop);
         if (port->open(QIODevice::OpenModeFlag::ExistingOnly | QIODevice::OpenModeFlag::ReadWrite))
         {
-            ui.logList->addItem("Port " + port->portName() + " ouvert !");
+            AddElementToLogList("Port " + port->portName() + " ouvert !");
         }
         else
         {
-            ui.logList->addItem("Echec de l'ouverture du port");
+            AddElementToLogList("Echec de l'ouverture du port");
         }
     }
 }
 
 void AdministratorApp::OnSerialPortReadyRead()
 {
-    QByteArray data = port->read(port->bytesAvailable());
-    QString str(data);
+    if (port->canReadLine())
+    {
+        QByteArray data = port->readLine();
+        QString rfidTag = QString::fromUtf8(data).trimmed();
+        AddElementToLogList("RFID detecte: " + rfidTag);
+
+        emit rfidReader->onRFIDRead(rfidTag);
+    }
 }
