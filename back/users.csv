@@ -1,0 +1,4 @@
+nom, prenom, nickname, password, rfid, isAdmin, quota, temps_energie_renouvelable, temps_edf, last_acces_to_box
+
+Céessevé, TestUser, CSVTest, csvmdp, 459587512, 0, 600, NULL, NULL, NULL
+Séhaissever, TestUserDeux, CSVATest, csvmdp, 478541256, 0, 600, NULL, NULL, NULL
