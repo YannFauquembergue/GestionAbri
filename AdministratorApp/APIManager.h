@@ -14,6 +14,7 @@ private:
 	QString ip;
 	int port;
 
+	QString lastAPIError;
 	QJsonArray jsonArray;
 
 public:
@@ -21,5 +22,6 @@ public:
 	User* loadUser(int id);
 	QList<User*> loadUsers();
 	bool saveUser(User*);
+	QString GetLastAPIError();
 };
 

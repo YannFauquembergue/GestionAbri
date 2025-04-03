@@ -27,7 +27,7 @@ AdministratorApp::~AdministratorApp()
 {
 }
 
-void AdministratorApp::RefreshUserList()
+void AdministratorApp::RefreshUserCombo()
 {
     ui.logList->addItem("Actualisation de la liste des utilisateurs");
     FetchUsers();
@@ -35,7 +35,7 @@ void AdministratorApp::RefreshUserList()
 
 void AdministratorApp::GetRFIDInfo(QString info)
 {
-    AddElementToLogList("RFID recu : " + info);
+    ui.rfidLogList->addItem("RFID recu : " + info);
 
 }
 
@@ -84,6 +84,7 @@ void AdministratorApp::AddUser()
     }
     else
     {
+        
         AddElementToLogList("ERREUR: Echec de l'ajout/modification de l'utilisateur");
     }
 }
@@ -94,6 +95,7 @@ void AdministratorApp::OnUserComboSelect(int i)
 
     if (ui.userCombo->currentIndex() > 0)
     {
+        ui.nicknameLineEdit->setEnabled(false);
         User* user = users[ui.userCombo->currentIndex() - 1];
         ui.nomLineEdit->setText(user->getNom());
         ui.prenomLineEdit->setText(user->getPrenom());
@@ -103,11 +105,35 @@ void AdministratorApp::OnUserComboSelect(int i)
     }
     else
     {
+        ui.nicknameLineEdit->setEnabled(true);
         ui.nomLineEdit->clear();
         ui.prenomLineEdit->clear();
         ui.nicknameLineEdit->clear();
         ui.rfidLineEdit->clear();
         ui.passwordLineEdit->clear();
+    }
+}
+
+void AdministratorApp::ResetFileUserList()
+{
+    ui.fileUsersList->clear();
+}
+
+void AdministratorApp::AddUsersFromFileList()
+{
+    if (ui.fileUsersList->rowCount() <= 0)
+    {
+        AddElementToLogList("ERREUR: La liste des utilisateurs est vide.");
+        return;
+    }
+}
+
+void AdministratorApp::LoadUserFile()
+{
+    if (ui.fileTextEdit->toPlainText() == NULL)
+    {
+        AddElementToLogList("ERREUR: Le fichier à charger est vide ou invalide.");
+        return;
     }
 }
 

@@ -84,7 +84,7 @@ void AdministratorApp::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
         auto *_t = static_cast<AdministratorApp *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->RefreshUserList(); break;
+        case 0: _t->RefreshUserCombo(); break;
         case 1: _t->AddUser(); break;
         case 2: _t->OnUserComboSelect((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 3: _t->OpenPort(); break;

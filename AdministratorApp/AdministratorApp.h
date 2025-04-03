@@ -44,9 +44,14 @@ private:
     void AddElementToLogList(QString text);
 
 public slots:
-    void RefreshUserList();
+    void RefreshUserCombo();
     void AddUser();
     void  OnUserComboSelect(int i);
+
+    void ResetFileUserList();
+    void AddUsersFromFileList();
+    void LoadUserFile();
+
     void OpenPort();
 
     void OnSerialPortReadyRead();

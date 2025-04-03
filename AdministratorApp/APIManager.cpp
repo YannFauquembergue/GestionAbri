@@ -13,31 +13,30 @@ User* APIManager::loadUser(int id)
     QNetworkReply* reply = accessManager->get(request);
 
     QObject::connect(reply, &QNetworkReply::finished, [reply]() {
-        if (reply->error() == QNetworkReply::NoError) {
-            QByteArray responseData = reply->readAll();
-            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
-            if (!jsonDoc.isObject()) {
-                reply->deleteLater();
-                return;
-            }
+     if (reply->error() == QNetworkReply::NoError) {
+         QByteArray responseData = reply->readAll();
+         QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+         if (!jsonDoc.isObject()) {
+             reply->deleteLater();
+             return;
+         }
 
-            QJsonObject obj = jsonDoc.object();
-            User* user = new User(
-                obj["prenom"].toString(),
-                obj["nom"].toString(),
-                obj["nickname"].toString(),
-                obj["rfid"].toString(),
-                obj["password"].toString(),
-                obj["id"].toInt()
-            );
-            qDebug() << "Utilisateur chargé : " << user->getNickname();
-        }
-        else {
-            qDebug() << "Erreur lors de la récupération de l'utilisateur : " << reply->errorString();
+         QJsonObject obj = jsonDoc.object();
+         User* user = new User(
+             obj["prenom"].toString(),
+             obj["nom"].toString(),
+             obj["nickname"].toString(),
+             obj["rfid"].toString(),
+             obj["password"].toString(),
+             obj["id"].toInt()
+         );
+         qDebug() << "Utilisateur chargé : " << user->getNickname();
         }
         reply->deleteLater();
-        });
-
+        return;
+     });
+    lastAPIError = "LOAD-USER";
+    qDebug() << "Erreur lors de la récupération de l'utilisateur : " << reply->errorString();
     return nullptr;
 }
 
@@ -76,6 +75,7 @@ QList<User*> APIManager::loadUsers()
         }
     }
     else {
+        lastAPIError = "LOAD-USERS";
         qDebug() << "Erreur lors de la récupération des utilisateurs : " << reply->errorString();
     }
     reply->deleteLater();
@@ -85,6 +85,7 @@ QList<User*> APIManager::loadUsers()
 bool APIManager::saveUser(User* user)
 {
     if (!user) {
+        lastAPIError = "SAVE-USER_NO-USER-ARG";
         qDebug() << "Utilisateur invalide, annulation de l'enregistrement.";
         return false;
     }
@@ -113,7 +114,12 @@ bool APIManager::saveUser(User* user)
     if (reply->error() == QNetworkReply::NoError) {
         success = true;
     }
-
+    lastAPIError = "SAVE-USER_SAVE-FAILED";
     reply->deleteLater();
     return success;
+}
+
+QString APIManager::GetLastAPIError()
+{
+    return lastAPIError;
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>542</height>
+    <width>789</width>
+    <height>617</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>10</x>
       <y>370</y>
-      <width>411</width>
-      <height>111</height>
+      <width>381</width>
+      <height>181</height>
      </rect>
     </property>
     <property name="autoScroll">
@@ -273,7 +273,7 @@
    <widget class="QGroupBox" name="moduleBox">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>610</x>
       <y>10</y>
       <width>171</width>
       <height>341</height>
@@ -322,13 +322,180 @@
      </property>
     </widget>
    </widget>
+   <widget class="QGroupBox" name="loadUsersBox">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>10</y>
+      <width>351</width>
+      <height>341</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Charger des utilisateurs</string>
+    </property>
+    <widget class="QPushButton" name="loadFileButton">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>90</y>
+       <width>111</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Charger fichier</string>
+     </property>
+    </widget>
+    <widget class="QTableWidget" name="fileUsersList">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>331</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>100</number>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Nom</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Prenom</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Pseudonyme</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Mot de passe</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Identifiant RFID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Admin ?</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Quota</string>
+      </property>
+     </column>
+    </widget>
+    <widget class="QTextEdit" name="fileTextEdit">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>50</y>
+       <width>261</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="saveFileUsersButton">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>310</y>
+       <width>121</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Enregistrer utilisateurs</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="resetFileListButton">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>310</y>
+       <width>121</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Réinitialiser liste</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>30</y>
+       <width>261</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Fichier CSV à charger</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QListWidget" name="rfidLogList">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>370</y>
+      <width>371</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="autoScroll">
+     <bool>true</bool>
+    </property>
+    <property name="movement">
+     <enum>QListView::Static</enum>
+    </property>
+    <property name="isWrapping" stdset="0">
+     <bool>false</bool>
+    </property>
+    <property name="spacing">
+     <number>1</number>
+    </property>
+    <property name="viewMode">
+     <enum>QListView::ListMode</enum>
+    </property>
+    <property name="uniformItemSizes">
+     <bool>false</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="rfidLogLabel">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>350</y>
+      <width>221</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RFID log</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>431</width>
+     <width>789</width>
      <height>20</height>
     </rect>
    </property>
@@ -384,7 +551,7 @@
    <sender>refreshComboButton</sender>
    <signal>clicked()</signal>
    <receiver>AdministratorAppClass</receiver>
-   <slot>RefreshUserList()</slot>
+   <slot>RefreshUserCombo()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>125</x>
@@ -412,12 +579,31 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>loadFileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AdministratorAppClass</receiver>
+   <slot>LoadUserFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>425</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>394</x>
+     <y>308</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>readyRead()</signal>
-  <slot>RefreshUserList()</slot>
+  <slot>RefreshUserCombo()</slot>
   <slot>AddUser()</slot>
   <slot>OnUserComboSelect(int)</slot>
   <slot>OpenPort()</slot>
+  <slot>ResetFileUserList()</slot>
+  <slot>AddUsersFromFileList()</slot>
+  <slot>LoadUserFile()</slot>
  </slots>
 </ui>
