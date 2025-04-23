@@ -49,6 +49,10 @@ void AdministratorApp::ListAvailablePorts()
 void AdministratorApp::FetchUsers()
 {
     users = api->loadUsers();
+    if (api->GetLastAPIError() == "LOAD-USERS")
+    {
+        AddElementToLogList(QString("Erreur lors de la recuperation des utilisateurs: " + api->GetErrorDetails()));
+    }
     ui.userCombo->clear();
     ui.userCombo->addItem("Nouvel utilisateur");
     for (int i = 0; i < users.size(); i++)

@@ -35,7 +35,6 @@ User* APIManager::loadUser(int id)
         reply->deleteLater();
         return;
      });
-    lastAPIError = "LOAD-USER";
     qDebug() << "Erreur lors de la récupération de l'utilisateur : " << reply->errorString();
     return nullptr;
 }
@@ -47,10 +46,10 @@ QList<User*> APIManager::loadUsers()
 
     QNetworkReply* reply = accessManager->get(request);
 
-    // Utilisation d'un QEventLoop pour bloquer jusqu'à ce que la réponse soit reçue
+    // QEventLoop pour looper jusqu'à ce que la réponse soit reçue
     QEventLoop loop;
     QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();  // Attend la fin de l'appel réseau
+    loop.exec();
 
     QList<User*> users;
     if (reply->error() == QNetworkReply::NoError) {
@@ -73,9 +72,12 @@ QList<User*> APIManager::loadUsers()
                 }
             }
         }
+        lastAPIError = "";
+        errorDetails = "";
     }
     else {
         lastAPIError = "LOAD-USERS";
+        errorDetails = reply->errorString();
         qDebug() << "Erreur lors de la récupération des utilisateurs : " << reply->errorString();
     }
     reply->deleteLater();
@@ -86,6 +88,7 @@ bool APIManager::saveUser(User* user)
 {
     if (!user) {
         lastAPIError = "SAVE-USER_NO-USER-ARG";
+        errorDetails = "No user argument";
         qDebug() << "Utilisateur invalide, annulation de l'enregistrement.";
         return false;
     }
@@ -113,8 +116,14 @@ bool APIManager::saveUser(User* user)
     bool success = false;
     if (reply->error() == QNetworkReply::NoError) {
         success = true;
+        lastAPIError = "";
+        errorDetails = "";
     }
-    lastAPIError = "SAVE-USER_SAVE-FAILED";
+    else
+    {
+        lastAPIError = "SAVE-USER_SAVE-FAILED";
+        errorDetails = reply->errorString();
+    }
     reply->deleteLater();
     return success;
 }
@@ -122,4 +131,9 @@ bool APIManager::saveUser(User* user)
 QString APIManager::GetLastAPIError()
 {
     return lastAPIError;
+}
+
+QString APIManager::GetErrorDetails()
+{
+    return errorDetails;
 }

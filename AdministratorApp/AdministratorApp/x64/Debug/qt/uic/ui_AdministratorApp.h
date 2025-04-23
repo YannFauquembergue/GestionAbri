@@ -131,7 +131,7 @@ public:
         userComboLabel->setAlignment(Qt::AlignCenter);
         refreshComboButton = new QPushButton(addUserBox);
         refreshComboButton->setObjectName(QString::fromUtf8("refreshComboButton"));
-        refreshComboButton->setGeometry(QRect(60, 90, 101, 21));
+        refreshComboButton->setGeometry(QRect(60, 90, 111, 21));
         userCombo = new QComboBox(addUserBox);
         userCombo->addItem(QString());
         userCombo->setObjectName(QString::fromUtf8("userCombo"));
