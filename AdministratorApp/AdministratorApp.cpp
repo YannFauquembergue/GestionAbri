@@ -16,7 +16,11 @@ AdministratorApp::AdministratorApp(QWidget* parent)
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
     QJsonObject obj = doc.object();
     api = new APIManager(obj["host"].toString(), obj["port"].toInt());
-    rfidReader = new RFIDReader(this);
+    rfidReader = new RFIDReader(obj["rfidHost"].toString(), obj["rfidPort"].toInt(), this);
+    if (rfidReader->IsReaderConnected())
+    {
+        AddElementToLogList("Lecteur RFID connecte !");
+    }
     connect(rfidReader, &RFIDReader::onRFIDRead, this, &AdministratorApp::GetRFIDInfo);
 
     ListAvailablePorts();

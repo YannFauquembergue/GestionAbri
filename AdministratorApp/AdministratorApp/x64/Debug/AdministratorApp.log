@@ -1,5 +1,16 @@
 ﻿   Qt/MSBuild: 3.3.1.1
+  Reading Qt configuration (C:/Qt/Qt5.14.2/5.14.2/msvc2017_64/bin/qmake)
    Qt: 5.14.2
-  APIManager.cpp
+  moc RFIDReader.h
   AdministratorApp.cpp
-  AdministratorApp.vcxproj -> C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.exe
+  RFIDReader.cpp
+  main.cpp
+C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\RFIDReader.h(5,10): error C1083: Impossible d'ouvrir le fichier include : 'modbus.h' : No such file or directory
+  (compiler le fichier source 'RFIDReader.cpp')
+  
+C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\RFIDReader.h(5,10): error C1083: Impossible d'ouvrir le fichier include : 'modbus.h' : No such file or directory
+  (compiler le fichier source 'AdministratorApp.cpp')
+  
+C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\RFIDReader.h(5,10): error C1083: Impossible d'ouvrir le fichier include : 'modbus.h' : No such file or directory
+  (compiler le fichier source 'main.cpp')
+  

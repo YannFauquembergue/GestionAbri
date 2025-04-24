@@ -7,7 +7,7 @@
 #include "User.h"
 
 #pragma once
-class APIManager : QObject
+class APIManager : public QObject
 {
 private:
 	QNetworkAccessManager* accessManager;
