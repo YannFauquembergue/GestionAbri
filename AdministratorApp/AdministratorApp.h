@@ -2,9 +2,22 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_AdministratorApp.h"
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
+#include "RFIDReader.h"
+#include "APIManager.h"
+
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrl>
+
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
+#include <QSerialPort>
+#include <QSerialPortInfo>
+
 #include <QDebug>
 
 class AdministratorApp : public QMainWindow
@@ -17,10 +30,29 @@ public:
 
 private:
     Ui::AdministratorAppClass ui;
-    QSqlDatabase database;
+    RFIDReader * rfidReader;
+    APIManager* api;
+
+    QSerialPort* port;
+    QList<User*> users;
+
+    void GetRFIDInfo(QString info);
+
+    void ListAvailablePorts();
+    void FetchUsers();
+
+    void AddElementToLogList(QString text);
 
 public slots:
-    void ConnectToDatabase();
-
+    void RefreshUserCombo();
     void AddUser();
+    void  OnUserComboSelect(int i);
+
+    void ResetFileUserList();
+    void AddUsersFromFileList();
+    void LoadUserFile();
+
+    void OpenPort();
+
+    void OnSerialPortReadyRead();
 };

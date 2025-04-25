@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_AdministratorApp_t {
-    QByteArrayData data[4];
-    char stringdata0[44];
+    QByteArrayData data[11];
+    char stringdata0[146];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,13 +33,22 @@ struct qt_meta_stringdata_AdministratorApp_t {
 static const qt_meta_stringdata_AdministratorApp_t qt_meta_stringdata_AdministratorApp = {
     {
 QT_MOC_LITERAL(0, 0, 16), // "AdministratorApp"
-QT_MOC_LITERAL(1, 17, 17), // "ConnectToDatabase"
-QT_MOC_LITERAL(2, 35, 0), // ""
-QT_MOC_LITERAL(3, 36, 7) // "AddUser"
+QT_MOC_LITERAL(1, 17, 16), // "RefreshUserCombo"
+QT_MOC_LITERAL(2, 34, 0), // ""
+QT_MOC_LITERAL(3, 35, 7), // "AddUser"
+QT_MOC_LITERAL(4, 43, 17), // "OnUserComboSelect"
+QT_MOC_LITERAL(5, 61, 1), // "i"
+QT_MOC_LITERAL(6, 63, 17), // "ResetFileUserList"
+QT_MOC_LITERAL(7, 81, 20), // "AddUsersFromFileList"
+QT_MOC_LITERAL(8, 102, 12), // "LoadUserFile"
+QT_MOC_LITERAL(9, 115, 8), // "OpenPort"
+QT_MOC_LITERAL(10, 124, 21) // "OnSerialPortReadyRead"
 
     },
-    "AdministratorApp\0ConnectToDatabase\0\0"
-    "AddUser"
+    "AdministratorApp\0RefreshUserCombo\0\0"
+    "AddUser\0OnUserComboSelect\0i\0"
+    "ResetFileUserList\0AddUsersFromFileList\0"
+    "LoadUserFile\0OpenPort\0OnSerialPortReadyRead"
 };
 #undef QT_MOC_LITERAL
 
@@ -49,7 +58,7 @@ static const uint qt_meta_data_AdministratorApp[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -57,10 +66,22 @@ static const uint qt_meta_data_AdministratorApp[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   24,    2, 0x0a /* Public */,
-       3,    0,   25,    2, 0x0a /* Public */,
+       1,    0,   54,    2, 0x0a /* Public */,
+       3,    0,   55,    2, 0x0a /* Public */,
+       4,    1,   56,    2, 0x0a /* Public */,
+       6,    0,   59,    2, 0x0a /* Public */,
+       7,    0,   60,    2, 0x0a /* Public */,
+       8,    0,   61,    2, 0x0a /* Public */,
+       9,    0,   62,    2, 0x0a /* Public */,
+      10,    0,   63,    2, 0x0a /* Public */,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -73,12 +94,17 @@ void AdministratorApp::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
         auto *_t = static_cast<AdministratorApp *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->ConnectToDatabase(); break;
+        case 0: _t->RefreshUserCombo(); break;
         case 1: _t->AddUser(); break;
+        case 2: _t->OnUserComboSelect((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: _t->ResetFileUserList(); break;
+        case 4: _t->AddUsersFromFileList(); break;
+        case 5: _t->LoadUserFile(); break;
+        case 6: _t->OpenPort(); break;
+        case 7: _t->OnSerialPortReadyRead(); break;
         default: ;
         }
     }
-    Q_UNUSED(_a);
 }
 
 QT_INIT_METAOBJECT const QMetaObject AdministratorApp::staticMetaObject = { {
@@ -110,13 +136,13 @@ int AdministratorApp::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 8;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 8)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 2;
+        _id -= 8;
     }
     return _id;
 }

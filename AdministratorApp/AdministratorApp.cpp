@@ -1,27 +1,12 @@
 #include "AdministratorApp.h"
 
-#include <QFile>
-#include <QJsonDocument>
-#include <QJsonObject>
-
-
 AdministratorApp::AdministratorApp(QWidget* parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-}
-
-AdministratorApp::~AdministratorApp()
-{
-}
-
-void AdministratorApp::ConnectToDatabase()
-{
-    ui.statusLine->setText("Statut: Tentative de connexion");
-
     QFile file("config.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ui.statusLine->setText("ERROR: Lecture du fichier config impossible.");
+        AddElementToLogList("ERREUR: Lecture du fichier config impossible.");
         return;
     }
 
@@ -30,41 +15,233 @@ void AdministratorApp::ConnectToDatabase()
 
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
     QJsonObject obj = doc.object();
-
-    database = QSqlDatabase::addDatabase("QMYSQL");
-    database.setHostName(obj["host"].toString());
-    database.setPort(obj["port"].toInt());
-    database.setDatabaseName(obj["database"].toString());
-    database.setUserName(obj["user"].toString());
-    database.setPassword(obj["password"].toString());
-
-    if (!database.open())
+    api = new APIManager(obj["host"].toString(), obj["port"].toInt());
+    rfidReader = new RFIDReader(obj["rfidHost"].toString(), obj["rfidPort"].toInt(), this);
+    if (rfidReader->IsReaderConnected())
     {
-        ui.stackedWidget->setCurrentIndex(0);
-        ui.statusLine->setText("Disconnected");
-        ui.logList->addItem("ERREUR: Connexion a la BDD impossible: " + database.lastError().text());
-        return;
+        AddElementToLogList("Lecteur RFID connecte !");
     }
-    ui.stackedWidget->setCurrentIndex(1);
-    ui.statusLine->setText("Connected");
-    ui.connectButton->setEnabled(false);
-    ui.logList->addItem("Connexion a la BDD etablie !");
+    connect(rfidReader, &RFIDReader::onRFIDRead, this, &AdministratorApp::GetRFIDInfo);
+
+    ListAvailablePorts();
+    FetchUsers();
+}
+
+AdministratorApp::~AdministratorApp()
+{
+}
+
+void AdministratorApp::RefreshUserCombo()
+{
+    ui.logList->addItem("Actualisation de la liste des utilisateurs");
+    FetchUsers();
+}
+
+void AdministratorApp::GetRFIDInfo(QString info)
+{
+    ui.rfidLogList->addItem("RFID recu : " + info);
+
+}
+
+void AdministratorApp::ListAvailablePorts()
+{
+    foreach(const QSerialPortInfo &portInfo, QSerialPortInfo::availablePorts()) {
+        ui.moduleCombo->addItem(portInfo.portName());
+    }
+}
+
+void AdministratorApp::FetchUsers()
+{
+    users = api->loadUsers();
+    if (api->GetLastAPIError() == "LOAD-USERS")
+    {
+        AddElementToLogList(QString("Erreur lors de la recuperation des utilisateurs: " + api->GetErrorDetails()));
+    }
+    ui.userCombo->clear();
+    ui.userCombo->addItem("Nouvel utilisateur");
+    for (int i = 0; i < users.size(); i++)
+    {
+        ui.userCombo->addItem(users[i]->getNickname() + " (" + QString::number(users[i]->getId()) + ")");
+    }
+    AddElementToLogList(QString("%1 utilisateurs trouves").arg(users.size()));
+    if (users.size() <= 0)
+    {
+        AddElementToLogList(QString("Le serveur est-il demarre ?").arg(users.size()));
+    }
+}
+
+void AdministratorApp::AddElementToLogList(QString text)
+{
+    ui.logList->addItem(text);
+    ui.logList->scrollToBottom();
 }
 
 void AdministratorApp::AddUser()
 {
-    QSqlQuery query;
-    query.prepare("INSERT INTO Utilisateur (nom, prenom, nickname, password, rfid) VALUES (:nom, :prenom, :nickname, :password, :rfid)");
-    query.bindValue(":nom", ui.nomLineEdit->text());
-    query.bindValue(":prenom", ui.prenomLineEdit->text());
-    query.bindValue(":nickname", ui.nicknameLineEdit->text());
-    query.bindValue(":password", ui.passwordLineEdit->text());
-    query.bindValue(":rfid", ui.rfidLineEdit->text());
-
-    if (!query.exec())
+    User* user = new User(
+        ui.prenomLineEdit->text(),
+        ui.nomLineEdit->text(),
+        ui.nicknameLineEdit->text(),
+        ui.rfidLineEdit->text(),
+        ui.passwordLineEdit->text(),
+        ui.adminCheckBox->isChecked()
+    );
+    if (api->saveUser(user))
     {
-        ui.logList->addItem("ERREUR: Ajout de l'utilisateur impossible: " + query.lastError().text());
+        AddElementToLogList("L'utilisateur " + ui.nicknameLineEdit->text() + " a ete ajoute/modifie avec succes !");
+        FetchUsers();
+    }
+    else
+    {
+        
+        AddElementToLogList("ERREUR: Echec de l'ajout/modification de l'utilisateur");
+    }
+}
+
+void AdministratorApp::OnUserComboSelect(int i)
+{
+    if (users.size() <= 0) { return; }
+
+    if (ui.userCombo->currentIndex() > 0)
+    {
+        ui.nicknameLineEdit->setEnabled(false);
+        User* user = users[ui.userCombo->currentIndex() - 1];
+        ui.nomLineEdit->setText(user->getNom());
+        ui.prenomLineEdit->setText(user->getPrenom());
+        ui.nicknameLineEdit->setText(user->getNickname());
+        ui.rfidLineEdit->setText(user->getRFID());
+        ui.passwordLineEdit->setText(user->getPassword());
+    }
+    else
+    {
+        ui.nicknameLineEdit->setEnabled(true);
+        ui.nomLineEdit->clear();
+        ui.prenomLineEdit->clear();
+        ui.nicknameLineEdit->clear();
+        ui.rfidLineEdit->clear();
+        ui.passwordLineEdit->clear();
+    }
+}
+
+void AdministratorApp::ResetFileUserList()
+{
+    ui.fileUsersList->clearContents();
+    ui.fileUsersList->setRowCount(0);
+}
+
+void AdministratorApp::AddUsersFromFileList()
+{
+    int rowCount = ui.fileUsersList->rowCount();
+    if (rowCount <= 0) {
+        AddElementToLogList("ERREUR: La liste des utilisateurs est vide.");
         return;
     }
-    ui.logList->addItem("L'utilisateur " + ui.nicknameLineEdit->text() + " a ete ajoute avec succes !");
+
+    int usersAdded = 0;
+    for (int row = 0; row < rowCount; ++row) {
+        QString nom = ui.fileUsersList->item(row, 0)->text();
+        QString prenom = ui.fileUsersList->item(row, 1)->text();
+        QString nickname = ui.fileUsersList->item(row, 2)->text();
+        QString password = ui.fileUsersList->item(row, 3)->text();
+        QString rfid = ui.fileUsersList->item(row, 4)->text();
+        QString isAdminStr = ui.fileUsersList->item(row, 5)->text().toLower();
+        QString quotaStr = ui.fileUsersList->item(row, 6)->text();
+
+        bool isAdmin = (isAdminStr == "oui" || isAdminStr == "yes" || isAdminStr == "1");
+        int quota = quotaStr.toInt();
+
+        User* user = new User(prenom, nom, nickname, rfid, password, isAdmin, quota);
+
+        if (api->saveUser(user)) {
+            AddElementToLogList("Utilisateur ajoute: " + nickname);
+            ++usersAdded;
+        }
+        else {
+            AddElementToLogList("ERREUR: Echec de l'ajout de " + nickname);
+        }
+
+        delete user;
+    }
+
+    AddElementToLogList(QString::number(usersAdded) + " utilisateur(s) ajoute(s) depuis le fichier.");
+    FetchUsers(); // rafraîchir la liste après ajout
+}
+
+void AdministratorApp::LoadUserFile()
+{
+    QString filePath = ui.fileTextEdit->toPlainText();
+    if (filePath.isEmpty()) {
+        AddElementToLogList("ERREUR: Le chemin du fichier est vide.");
+        return;
+    }
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        AddElementToLogList("ERREUR: Impossible d'ouvrir le fichier.");
+        return;
+    }
+
+    QTextStream in(&file);
+    QString headerLine = in.readLine();
+
+    ui.fileUsersList->setRowCount(0);
+
+    int row = 0;
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (line.isEmpty()) continue;
+
+        QStringList values = line.split(',', Qt::SkipEmptyParts);
+        if (values.size() < 7) {
+            AddElementToLogList("ERREUR: Ligne CSV invalide, données insuffisantes.");
+            continue;
+        }
+
+        ui.fileUsersList->insertRow(row);
+        for (int col = 0; col < 7; ++col) {
+            QString value = values[col].trimmed();
+            if (col == 5) {
+                value = (value == "1") ? "Oui" : "Non";
+            }
+            QTableWidgetItem* item = new QTableWidgetItem(value);
+            ui.fileUsersList->setItem(row, col, item);
+        }
+        ++row;
+    }
+
+    file.close();
+    AddElementToLogList(QString::number(row) + " utilisateurs charges depuis le fichier.");
+}
+
+void AdministratorApp::OpenPort()
+{
+    if (ui.moduleCombo->currentIndex() >= 0)
+    {
+        port = new QSerialPort(ui.moduleCombo->currentText());
+        QObject::connect(port, SIGNAL(readyRead()), this, SLOT(OnSerialPortReadyRead()));
+        port->setBaudRate(QSerialPort::Baud9600);
+        port->setDataBits(QSerialPort::DataBits::Data8);
+        port->setParity(QSerialPort::Parity::NoParity);
+        port->setStopBits(QSerialPort::StopBits::OneStop);
+        if (port->open(QIODevice::OpenModeFlag::ExistingOnly | QIODevice::OpenModeFlag::ReadWrite))
+        {
+            AddElementToLogList("Port " + port->portName() + " ouvert !");
+        }
+        else
+        {
+            AddElementToLogList("Echec de l'ouverture du port");
+        }
+    }
+}
+
+void AdministratorApp::OnSerialPortReadyRead()
+{
+    if (port->canReadLine())
+    {
+        QByteArray data = port->readLine();
+        QString rfidTag = QString::fromUtf8(data).trimmed();
+        AddElementToLogList("RFID detecte: " + rfidTag);
+
+        emit rfidReader->onRFIDRead(rfidTag);
+    }
 }

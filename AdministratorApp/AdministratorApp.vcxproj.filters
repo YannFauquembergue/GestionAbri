@@ -40,8 +40,47 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RFIDReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="APIManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\modbus.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\modbus-data.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\modbus-rtu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\modbus-tcp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="APIManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="RFIDReader.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\win32\modbus.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
