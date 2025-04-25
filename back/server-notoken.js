@@ -1,16 +1,10 @@
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
-
 const dotenv = require('dotenv');
-dotenv.config();
-
 const rateLimit = require('express-rate-limit');
 
-const jwt = require('jsonwebtoken');
-const secretKey = process.env.TOKEN_KEY;
-
-
+dotenv.config();
 const app = express();
 
 app.use(express.json());
@@ -37,18 +31,7 @@ bddConnection.connect((err) => {
     console.log("Connexion à la BDD établie");
 });
 
-const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.status(403).json({ error: "Accès refusé, token manquant" });
-
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) return res.status(401).json({ error: "Token invalide" });
-        req.user = decoded;
-        next();
-    });
-};
-
-app.get('/getUser/:id', verifyToken, (req, res) => {
+app.get('/getUser/:id', (req, res) => {
     const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
         return res.status(400).json({ error: "ID utilisateur invalide" });
@@ -87,25 +70,23 @@ app.post('/addUser', (req, res) => {
         return res.status(400).json({ error: "Informations incomplètes" });
     }
 
-    const token = jwt.sign({ nickname }, secretKey, { expiresIn: '7d' });
-
     const checkQuery = "SELECT * FROM Utilisateur WHERE nickname = ?";
     bddConnection.query(checkQuery, [nickname], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
 
         if (results.length > 0) {
-            const updateQuery = "UPDATE Utilisateur SET nom = ?, prenom = ?, password = ?, rfid = ?, token = ? WHERE nickname = ?";
-            bddConnection.query(updateQuery, [nom, prenom, password, rfid, token, nickname], (err) => {
+            const updateQuery = "UPDATE Utilisateur SET nom = ?, prenom = ?, password = ?, rfid = ? WHERE nickname = ?";
+            bddConnection.query(updateQuery, [nom, prenom, password, rfid, nickname], (err) => {
                 if (err) return res.status(500).json({ error: err.message });
                 console.log(`Utilisateur ${nickname} mis à jour`);
-                res.json({ message: `Utilisateur ${nickname} mis à jour`, token });
+                res.json({ message: `Utilisateur ${nickname} mis à jour` });
             });
         } else {
-            const insertQuery = "INSERT INTO Utilisateur (nom, prenom, nickname, password, rfid, token) VALUES (?, ?, ?, ?, ?, ?)";
-            bddConnection.query(insertQuery, [nom, prenom, nickname, password, rfid, token], (err) => {
+            const insertQuery = "INSERT INTO Utilisateur (nom, prenom, nickname, password, rfid) VALUES (?, ?, ?, ?, ?)";
+            bddConnection.query(insertQuery, [nom, prenom, nickname, password, rfid], (err) => {
                 if (err) return res.status(500).json({ error: err.message });
                 console.log(`Utilisateur ${nickname} ajouté`);
-                res.json({ message: `Utilisateur ${nickname} ajouté`, token });
+                res.json({ message: `Utilisateur ${nickname} ajouté` });
             });
         }
     });
