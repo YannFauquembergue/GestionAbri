@@ -33,6 +33,8 @@ User* APIManager::loadUser(int id)
             obj["nickname"].toString(),
             obj["rfid"].toString(),
             obj["password"].toString(),
+            obj["isAdmin"].toBool(),
+            obj["quota"].toInt(),
             obj["id"].toInt()
         );
         lastAPIError = "";
@@ -77,6 +79,8 @@ QList<User*> APIManager::loadUsers()
                         userObj["nickname"].toString(),
                         userObj["rfid"].toString(),
                         userObj["password"].toString(),
+                        userObj["isAdmin"].toBool(),
+                        userObj["quota"].toInt(),
                         userObj["id"].toInt()
                     );
                     users.append(user);

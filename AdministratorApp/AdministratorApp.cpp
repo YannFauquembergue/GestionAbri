@@ -83,7 +83,8 @@ void AdministratorApp::AddUser()
         ui.nomLineEdit->text(),
         ui.nicknameLineEdit->text(),
         ui.rfidLineEdit->text(),
-        ui.passwordLineEdit->text()
+        ui.passwordLineEdit->text(),
+        ui.adminCheckBox->isChecked()
     );
     if (api->saveUser(user))
     {
@@ -124,25 +125,92 @@ void AdministratorApp::OnUserComboSelect(int i)
 
 void AdministratorApp::ResetFileUserList()
 {
-    ui.fileUsersList->clear();
+    ui.fileUsersList->clearContents();
+    ui.fileUsersList->setRowCount(0);
 }
 
 void AdministratorApp::AddUsersFromFileList()
 {
-    if (ui.fileUsersList->rowCount() <= 0)
-    {
+    int rowCount = ui.fileUsersList->rowCount();
+    if (rowCount <= 0) {
         AddElementToLogList("ERREUR: La liste des utilisateurs est vide.");
         return;
     }
+
+    int usersAdded = 0;
+    for (int row = 0; row < rowCount; ++row) {
+        QString nom = ui.fileUsersList->item(row, 0)->text();
+        QString prenom = ui.fileUsersList->item(row, 1)->text();
+        QString nickname = ui.fileUsersList->item(row, 2)->text();
+        QString password = ui.fileUsersList->item(row, 3)->text();
+        QString rfid = ui.fileUsersList->item(row, 4)->text();
+        QString isAdminStr = ui.fileUsersList->item(row, 5)->text().toLower();
+        QString quotaStr = ui.fileUsersList->item(row, 6)->text();
+
+        bool isAdmin = (isAdminStr == "oui" || isAdminStr == "yes" || isAdminStr == "1");
+        int quota = quotaStr.toInt();
+
+        User* user = new User(prenom, nom, nickname, rfid, password, isAdmin, quota);
+
+        if (api->saveUser(user)) {
+            AddElementToLogList("Utilisateur ajoute: " + nickname);
+            ++usersAdded;
+        }
+        else {
+            AddElementToLogList("ERREUR: Echec de l'ajout de " + nickname);
+        }
+
+        delete user;
+    }
+
+    AddElementToLogList(QString::number(usersAdded) + " utilisateur(s) ajoute(s) depuis le fichier.");
+    FetchUsers(); // rafraîchir la liste après ajout
 }
 
 void AdministratorApp::LoadUserFile()
 {
-    if (ui.fileTextEdit->toPlainText() == NULL)
-    {
-        AddElementToLogList("ERREUR: Le fichier à charger est vide ou invalide.");
+    QString filePath = ui.fileTextEdit->toPlainText();
+    if (filePath.isEmpty()) {
+        AddElementToLogList("ERREUR: Le chemin du fichier est vide.");
         return;
     }
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        AddElementToLogList("ERREUR: Impossible d'ouvrir le fichier.");
+        return;
+    }
+
+    QTextStream in(&file);
+    QString headerLine = in.readLine();
+
+    ui.fileUsersList->setRowCount(0);
+
+    int row = 0;
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (line.isEmpty()) continue;
+
+        QStringList values = line.split(',', Qt::SkipEmptyParts);
+        if (values.size() < 7) {
+            AddElementToLogList("ERREUR: Ligne CSV invalide, données insuffisantes.");
+            continue;
+        }
+
+        ui.fileUsersList->insertRow(row);
+        for (int col = 0; col < 7; ++col) {
+            QString value = values[col].trimmed();
+            if (col == 5) {
+                value = (value == "1") ? "Oui" : "Non";
+            }
+            QTableWidgetItem* item = new QTableWidgetItem(value);
+            ui.fileUsersList->setItem(row, col, item);
+        }
+        ++row;
+    }
+
+    file.close();
+    AddElementToLogList(QString::number(row) + " utilisateurs charges depuis le fichier.");
 }
 
 void AdministratorApp::OpenPort()

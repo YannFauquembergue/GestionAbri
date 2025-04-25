@@ -1,6 +1,6 @@
 #include "User.h"
 
-User::User(QString prenom, QString nom, QString nickname, QString rfid, QString password, int id)
+User::User(QString prenom, QString nom, QString nickname, QString rfid, QString password, bool isAdmin, int quota, int id)
 {
 	this->id = id;
 	this->prenom = prenom;
@@ -8,6 +8,8 @@ User::User(QString prenom, QString nom, QString nickname, QString rfid, QString 
 	this->nickname = nickname;
 	this->rfid = rfid;
 	this->password = password;
+	this->isAdmin = isAdmin;
+	this->quota = quota;
 }
 
 int User::getId()
@@ -38,4 +40,14 @@ QString User::getRFID()
 QString User::getPassword()
 {
 	return password;
+}
+
+bool User::getIsAdmin()
+{
+	return isAdmin;
+}
+
+int User::getQuota()
+{
+	return quota;
 }

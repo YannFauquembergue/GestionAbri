@@ -60,9 +60,35 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <LibraryPath>C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <LibraryPath>C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\Include\Modbus;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\Include\Modbus;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\Include\Modbus;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\Include\Modbus;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -92,11 +118,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\modbus-data.c" />
+    <ClCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\modbus-rtu.c" />
+    <ClCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\modbus-tcp.c" />
+    <ClCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\modbus.c" />
     <ClCompile Include="APIManager.cpp" />
-    <ClCompile Include="Include\Modbus\modbus-data.c" />
-    <ClCompile Include="Include\Modbus\modbus-rtu.c" />
-    <ClCompile Include="Include\Modbus\modbus-tcp.c" />
-    <ClCompile Include="Include\Modbus\modbus.c" />
     <ClCompile Include="RFIDReader.cpp" />
     <ClCompile Include="User.cpp" />
     <QtRcc Include="AdministratorApp.qrc" />
@@ -111,14 +137,10 @@
   <ItemGroup>
     <ClInclude Include="APIManager.h" />
     <QtMoc Include="RFIDReader.h" />
-    <ClInclude Include="Include\Modbus\modbus-private.h" />
-    <ClInclude Include="Include\Modbus\modbus-rtu-private.h" />
-    <ClInclude Include="Include\Modbus\modbus-rtu.h" />
-    <ClInclude Include="Include\Modbus\modbus-tcp-private.h" />
-    <ClInclude Include="Include\Modbus\modbus-tcp.h" />
-    <ClInclude Include="Include\Modbus\modbus-version.h" />
-    <ClInclude Include="Include\Modbus\modbus.h" />
     <ClInclude Include="User.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\..\..\Downloads\libmodbus-3.1.11\libmodbus-3.1.11\src\win32\modbus.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

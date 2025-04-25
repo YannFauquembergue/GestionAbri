@@ -40,25 +40,52 @@ void RFIDReader::readData()
     if (!isConnected || ctx == nullptr)
         return;
 
-    // Lecture de 2 registres (4 octets)
-    uint16_t tab_reg[2] = { 0 };
-    int rc = modbus_read_registers(ctx, 0, 2, tab_reg); // Adresse 0, 2 registres
-
+    uint16_t isNewTag = 0;
+    // Lire le registre IsNewTag (adresse 1000)
+    int rc = modbus_read_registers(ctx, 1000, 1, &isNewTag);
     if (rc == -1) {
-        qDebug() << "Erreur de lecture Modbus : " << modbus_strerror(errno);
+        qDebug() << "Erreur de lecture IsNewTag : " << modbus_strerror(errno);
         modbus_close(ctx);
         isConnected = false;
         return;
     }
 
-    // Conversion des registres en hex string
-    QByteArray rfidBytes;
-    for (int i = 0; i < rc; ++i) {
-        rfidBytes.append((tab_reg[i] >> 8) & 0xFF);
-        rfidBytes.append(tab_reg[i] & 0xFF);
-    }
+    if (isNewTag == 1) {
+        uint16_t uidLength = 0;
+        // Lire la longueur de l'UID (adresse 1001)
+        rc = modbus_read_registers(ctx, 1001, 1, &uidLength);
+        if (rc == -1) {
+            qDebug() << "Erreur de lecture UID Length : " << modbus_strerror(errno);
+            return;
+        }
 
-    QString rfidData = QString::fromUtf8(rfidBytes.toHex());
-    qDebug() << "RFID lu : " << rfidData;
-    emit onRFIDRead(rfidData);
+        // Calculer le nombre de registres à lire pour l'UID
+        int numRegisters = (uidLength + 1) / 2; // Chaque registre contient 2 octets
+        uint16_t uidData[10] = { 0 }; // Assure une taille suffisante
+
+        // Lire l'UID
+        rc = modbus_read_registers(ctx, 1002, numRegisters, uidData);
+        if (rc == -1) {
+            qDebug() << "Erreur de lecture UID : " << modbus_strerror(errno);
+            return;
+        }
+
+        // Convertir les données UID en hexa
+        QByteArray rfidBytes;
+        for (int i = 0; i < numRegisters; ++i) {
+            rfidBytes.append((uidData[i] >> 8) & 0xFF);
+            rfidBytes.append(uidData[i] & 0xFF);
+        }
+
+        QString rfidData = QString::fromUtf8(rfidBytes.left(uidLength).toHex().toUpper());
+        qDebug() << "RFID lu : " << rfidData;
+        emit onRFIDRead(rfidData);
+
+        // Réinitialiser le registre IsNewTag à 0
+        uint16_t resetValue = 0;
+        rc = modbus_write_register(ctx, 1000, resetValue);
+        if (rc == -1) {
+            qDebug() << "Erreur de réinitialisation IsNewTag : " << modbus_strerror(errno);
+        }
+    }
 }

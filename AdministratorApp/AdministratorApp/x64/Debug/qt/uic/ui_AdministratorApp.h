@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
@@ -20,6 +21,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QTextEdit>
@@ -48,6 +50,9 @@ public:
     QLabel *userComboLabel;
     QPushButton *refreshComboButton;
     QComboBox *userCombo;
+    QCheckBox *adminCheckBox;
+    QLabel *quotaLabel;
+    QSpinBox *quotaSpinBox;
     QLabel *logLabel;
     QGroupBox *moduleBox;
     QLabel *moduleLabel;
@@ -88,42 +93,42 @@ public:
         addUserBox->setGeometry(QRect(10, 10, 231, 341));
         nomLabel = new QLabel(addUserBox);
         nomLabel->setObjectName(QString::fromUtf8("nomLabel"));
-        nomLabel->setGeometry(QRect(30, 150, 61, 21));
+        nomLabel->setGeometry(QRect(30, 120, 61, 21));
         nomLabel->setAlignment(Qt::AlignCenter);
         nomLineEdit = new QLineEdit(addUserBox);
         nomLineEdit->setObjectName(QString::fromUtf8("nomLineEdit"));
-        nomLineEdit->setGeometry(QRect(10, 170, 101, 21));
+        nomLineEdit->setGeometry(QRect(10, 140, 101, 21));
         prenomLineEdit = new QLineEdit(addUserBox);
         prenomLineEdit->setObjectName(QString::fromUtf8("prenomLineEdit"));
-        prenomLineEdit->setGeometry(QRect(120, 170, 101, 21));
+        prenomLineEdit->setGeometry(QRect(120, 140, 101, 21));
         prenomLabel = new QLabel(addUserBox);
         prenomLabel->setObjectName(QString::fromUtf8("prenomLabel"));
-        prenomLabel->setGeometry(QRect(140, 150, 61, 21));
+        prenomLabel->setGeometry(QRect(140, 120, 61, 21));
         prenomLabel->setAlignment(Qt::AlignCenter);
         nicknameLineEdit = new QLineEdit(addUserBox);
         nicknameLineEdit->setObjectName(QString::fromUtf8("nicknameLineEdit"));
-        nicknameLineEdit->setGeometry(QRect(60, 210, 111, 21));
+        nicknameLineEdit->setGeometry(QRect(10, 180, 101, 21));
         nicknameLabel = new QLabel(addUserBox);
         nicknameLabel->setObjectName(QString::fromUtf8("nicknameLabel"));
-        nicknameLabel->setGeometry(QRect(60, 190, 111, 21));
+        nicknameLabel->setGeometry(QRect(10, 160, 101, 21));
         nicknameLabel->setAlignment(Qt::AlignCenter);
         addUserButton = new QPushButton(addUserBox);
         addUserButton->setObjectName(QString::fromUtf8("addUserButton"));
         addUserButton->setGeometry(QRect(40, 300, 151, 31));
         rfidLineEdit = new QLineEdit(addUserBox);
         rfidLineEdit->setObjectName(QString::fromUtf8("rfidLineEdit"));
-        rfidLineEdit->setGeometry(QRect(10, 270, 101, 21));
+        rfidLineEdit->setGeometry(QRect(10, 230, 101, 21));
         passwordLabel = new QLabel(addUserBox);
         passwordLabel->setObjectName(QString::fromUtf8("passwordLabel"));
-        passwordLabel->setGeometry(QRect(120, 250, 101, 21));
+        passwordLabel->setGeometry(QRect(120, 210, 101, 21));
         passwordLabel->setAlignment(Qt::AlignCenter);
         passwordLineEdit = new QLineEdit(addUserBox);
         passwordLineEdit->setObjectName(QString::fromUtf8("passwordLineEdit"));
-        passwordLineEdit->setGeometry(QRect(120, 270, 101, 21));
+        passwordLineEdit->setGeometry(QRect(120, 230, 101, 21));
         passwordLineEdit->setEchoMode(QLineEdit::Password);
         rfidLabel = new QLabel(addUserBox);
         rfidLabel->setObjectName(QString::fromUtf8("rfidLabel"));
-        rfidLabel->setGeometry(QRect(10, 250, 101, 21));
+        rfidLabel->setGeometry(QRect(10, 210, 101, 21));
         rfidLabel->setAlignment(Qt::AlignCenter);
         userComboLabel = new QLabel(addUserBox);
         userComboLabel->setObjectName(QString::fromUtf8("userComboLabel"));
@@ -136,6 +141,18 @@ public:
         userCombo->addItem(QString());
         userCombo->setObjectName(QString::fromUtf8("userCombo"));
         userCombo->setGeometry(QRect(40, 50, 151, 31));
+        adminCheckBox = new QCheckBox(addUserBox);
+        adminCheckBox->setObjectName(QString::fromUtf8("adminCheckBox"));
+        adminCheckBox->setGeometry(QRect(120, 180, 101, 19));
+        quotaLabel = new QLabel(addUserBox);
+        quotaLabel->setObjectName(QString::fromUtf8("quotaLabel"));
+        quotaLabel->setGeometry(QRect(50, 250, 141, 21));
+        quotaLabel->setAlignment(Qt::AlignCenter);
+        quotaSpinBox = new QSpinBox(addUserBox);
+        quotaSpinBox->setObjectName(QString::fromUtf8("quotaSpinBox"));
+        quotaSpinBox->setGeometry(QRect(80, 270, 81, 22));
+        quotaSpinBox->setMaximum(9999);
+        quotaSpinBox->setValue(600);
         logLabel = new QLabel(centralWidget);
         logLabel->setObjectName(QString::fromUtf8("logLabel"));
         logLabel->setGeometry(QRect(10, 350, 221, 21));
@@ -221,6 +238,8 @@ public:
         QObject::connect(refreshComboButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(RefreshUserCombo()));
         QObject::connect(openPortButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(OpenPort()));
         QObject::connect(loadFileButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(LoadUserFile()));
+        QObject::connect(saveFileUsersButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(AddUsersFromFileList()));
+        QObject::connect(resetFileListButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(ResetFileUserList()));
 
         QMetaObject::connectSlotsByName(AdministratorAppClass);
     } // setupUi
@@ -242,8 +261,10 @@ public:
         refreshComboButton->setText(QCoreApplication::translate("AdministratorAppClass", "Actualiser liste", nullptr));
         userCombo->setItemText(0, QCoreApplication::translate("AdministratorAppClass", "Nouvel utilisateur", nullptr));
 
+        adminCheckBox->setText(QCoreApplication::translate("AdministratorAppClass", "Admin ?", nullptr));
+        quotaLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Quota (Par d\303\251faut: 600)", nullptr));
         logLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Log", nullptr));
-        moduleBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Module RFID", nullptr));
+        moduleBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Module USB", nullptr));
         moduleLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Port", nullptr));
         openPortButton->setText(QCoreApplication::translate("AdministratorAppClass", "Ouvrir port", nullptr));
         loadUsersBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Charger des utilisateurs", nullptr));
