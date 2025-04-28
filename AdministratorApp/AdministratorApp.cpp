@@ -5,7 +5,7 @@ AdministratorApp::AdministratorApp(QWidget* parent)
 {
     ui.setupUi(this);
     QFile file("config.json");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) { // Lecture du fichier config pour les informations confidentielles
         AddElementToLogList("ERREUR: Lecture du fichier config impossible.");
         return;
     }
@@ -15,41 +15,50 @@ AdministratorApp::AdministratorApp(QWidget* parent)
 
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
     QJsonObject obj = doc.object();
-    api = new APIManager(obj["host"].toString(), obj["port"].toInt());
-    rfidReader = new RFIDReader(obj["rfidHost"].toString(), obj["rfidPort"].toInt(), this);
+    api = new APIManager(obj["host"].toString(), obj["port"].toInt()); // Définition d'une instance pour la gestion de l'API
+    rfidReader = new RFIDReader(obj["rfidHost"].toString(), obj["rfidPort"].toInt(), this); // Définition d'une instance pour les lectures de données d'une carte RFID
     if (rfidReader->IsReaderConnected())
     {
         AddElementToLogList("Lecteur RFID connecte !");
     }
+    else
+    {
+        AddElementToLogList("AVERTISSEMENT: Lecteur RFID non connecte !");
+    }
     connect(rfidReader, &RFIDReader::onRFIDRead, this, &AdministratorApp::GetRFIDInfo);
 
-    ListAvailablePorts();
-    FetchUsers();
+    ListAvailablePorts(); // Affichage des ports USB disponibles
+    FetchUsers(); // Affichage des utilisateurs de la BDD
 }
 
 AdministratorApp::~AdministratorApp()
 {
 }
 
+// Fonction slot pour actualiser la liste des utilisateurs
 void AdministratorApp::RefreshUserCombo()
 {
     ui.logList->addItem("Actualisation de la liste des utilisateurs");
     FetchUsers();
 }
 
+// Fonction pour la lecture d'informations RFID, et pour l'ajouter dans la console log RFID
 void AdministratorApp::GetRFIDInfo(QString info)
 {
     ui.rfidLogList->addItem("RFID recu : " + info);
-
+    ui.rfidLogList->scrollToBottom();
 }
 
+// Fonction pour lister les ports disponibles
 void AdministratorApp::ListAvailablePorts()
 {
+    ui.moduleCombo->clear();
     foreach(const QSerialPortInfo &portInfo, QSerialPortInfo::availablePorts()) {
         ui.moduleCombo->addItem(portInfo.portName());
     }
 }
 
+// Fonction pour récupérer les utilisateurs de la BDD et les listers
 void AdministratorApp::FetchUsers()
 {
     users = api->loadUsers();
@@ -70,12 +79,14 @@ void AdministratorApp::FetchUsers()
     }
 }
 
+// Fonction pour ajouter un élément dans la console log
 void AdministratorApp::AddElementToLogList(QString text)
 {
     ui.logList->addItem(text);
     ui.logList->scrollToBottom();
 }
 
+// Fonction pour ajouter un utilisateur en fonction des informations inscrites sur l'application
 void AdministratorApp::AddUser()
 {
     QString prenom = ui.prenomLineEdit->text().trimmed();
@@ -123,7 +134,7 @@ void AdministratorApp::AddUser()
     }
 }
 
-
+// Fonction slot pour combler les informations utilisateurs en fonction de l'index de l'utilisateur sélectionné
 void AdministratorApp::OnUserComboSelect(int i)
 {
     if (users.size() <= 0) { return; }
@@ -149,12 +160,14 @@ void AdministratorApp::OnUserComboSelect(int i)
     }
 }
 
+// Fonction slot pour réinitialiser la liste des utilisateurs importés depuis un fichier CSV
 void AdministratorApp::ResetFileUserList()
 {
     ui.fileUsersList->clearContents();
     ui.fileUsersList->setRowCount(0);
 }
 
+// Fonction slot pour ajouter les utilisateurs importés depuis un fichier CSV
 void AdministratorApp::AddUsersFromFileList()
 {
     int rowCount = ui.fileUsersList->rowCount();
@@ -207,6 +220,7 @@ void AdministratorApp::AddUsersFromFileList()
     FetchUsers(); // Rafraîchir la liste après ajout
 }
 
+// Fonction slot pour charger un fichier CSV
 void AdministratorApp::LoadUserFile()
 {
     QString filePath = ui.fileTextEdit->toPlainText();
@@ -253,6 +267,7 @@ void AdministratorApp::LoadUserFile()
     AddElementToLogList(QString::number(row) + " utilisateurs charges depuis le fichier.");
 }
 
+// Fonction slot pour ouvrir le port sélectionné sur l'application
 void AdministratorApp::OpenPort()
 {
     if (ui.moduleCombo->currentIndex() >= 0)
@@ -274,6 +289,7 @@ void AdministratorApp::OpenPort()
     }
 }
 
+// Fonction slot pour lire les informations du port ouvert
 void AdministratorApp::OnSerialPortReadyRead()
 {
     if (port->canReadLine())
