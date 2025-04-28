@@ -5,6 +5,8 @@
 #include "RFIDReader.h"
 #include "APIManager.h"
 
+#include <QRegularExpressionValidator>
+
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>

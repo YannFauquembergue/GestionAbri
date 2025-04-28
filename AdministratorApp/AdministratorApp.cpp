@@ -78,25 +78,51 @@ void AdministratorApp::AddElementToLogList(QString text)
 
 void AdministratorApp::AddUser()
 {
+    QString prenom = ui.prenomLineEdit->text().trimmed();
+    QString nom = ui.nomLineEdit->text().trimmed();
+    QString nickname = ui.nicknameLineEdit->text().trimmed();
+    QString rfid = ui.rfidLineEdit->text().trimmed();
+    QString password = ui.passwordLineEdit->text();
+
+    if (prenom.isEmpty() || nom.isEmpty() || nickname.isEmpty() || rfid.isEmpty() || password.isEmpty()) {
+        AddElementToLogList("ERREUR: Tous les champs doivent être remplis.");
+        return;
+    }
+
+    // Limitations RegEx
+    QRegularExpression nameRegex("^[A-Za-zÀ-ÖØ-öø-ÿ\\-\\s]+$"); // Lettres, traits d'union et espaces autorisés
+    QRegularExpression nicknameRegex("^[A-Za-z0-9_]{3,20}$"); // Lettres, chiffres et underscores autorisés, et entre 3 et 20 caractères
+    QRegularExpression passwordRegex("^.{6,}$"); // Au moins 6 caractères requis
+    QRegularExpression rfidRegex("^[A-Za-z0-9]{4,32}$"); // Lettres et chiffres autorisés, entre 4 et 32 caractères
+
+    if (!nameRegex.match(prenom).hasMatch() || !nameRegex.match(nom).hasMatch() ||
+        !nicknameRegex.match(nickname).hasMatch() ||
+        !passwordRegex.match(password).hasMatch() ||
+        !rfidRegex.match(rfid).hasMatch()) {
+        AddElementToLogList("ERREUR: Format de champ invalide.");
+        return;
+    }
+
     User* user = new User(
-        ui.prenomLineEdit->text(),
-        ui.nomLineEdit->text(),
-        ui.nicknameLineEdit->text(),
-        ui.rfidLineEdit->text(),
-        ui.passwordLineEdit->text(),
+        prenom,
+        nom,
+        nickname,
+        rfid,
+        password,
         ui.adminCheckBox->isChecked()
     );
+
     if (api->saveUser(user))
     {
-        AddElementToLogList("L'utilisateur " + ui.nicknameLineEdit->text() + " a ete ajoute/modifie avec succes !");
-        FetchUsers();
+        AddElementToLogList("L'utilisateur " + nickname + " a ete ajoute/modifie avec succes !");
+        FetchUsers(); // Rafraîchir la liste après ajout
     }
     else
     {
-        
         AddElementToLogList("ERREUR: Echec de l'ajout/modification de l'utilisateur");
     }
 }
+
 
 void AdministratorApp::OnUserComboSelect(int i)
 {
@@ -150,6 +176,20 @@ void AdministratorApp::AddUsersFromFileList()
         bool isAdmin = (isAdminStr == "oui" || isAdminStr == "yes" || isAdminStr == "1");
         int quota = quotaStr.toInt();
 
+        // Limitations RegEx
+        QRegularExpression nameRegex("^[A-Za-zÀ-ÖØ-öø-ÿ\\-\\s]+$"); // Lettres, traits d'union et espaces autorisés
+        QRegularExpression nicknameRegex("^[A-Za-z0-9_]{3,20}$"); // Lettres, chiffres et underscores autorisés, et entre 3 et 20 caractères
+        QRegularExpression passwordRegex("^.{6,}$"); // Au moins 6 caractères requis
+        QRegularExpression rfidRegex("^[A-Za-z0-9]{4,32}$"); // Lettres et chiffres autorisés, entre 4 et 32 caractères
+
+        if (!nameRegex.match(prenom).hasMatch() || !nameRegex.match(nom).hasMatch() ||
+            !nicknameRegex.match(nickname).hasMatch() ||
+            !passwordRegex.match(password).hasMatch() ||
+            !rfidRegex.match(rfid).hasMatch()) {
+            AddElementToLogList("ERREUR: Format de champ invalide.");
+            return;
+        }
+
         User* user = new User(prenom, nom, nickname, rfid, password, isAdmin, quota);
 
         if (api->saveUser(user)) {
@@ -164,7 +204,7 @@ void AdministratorApp::AddUsersFromFileList()
     }
 
     AddElementToLogList(QString::number(usersAdded) + " utilisateur(s) ajoute(s) depuis le fichier.");
-    FetchUsers(); // rafraîchir la liste après ajout
+    FetchUsers(); // Rafraîchir la liste après ajout
 }
 
 void AdministratorApp::LoadUserFile()

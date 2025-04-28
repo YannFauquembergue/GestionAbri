@@ -1,6 +1,6 @@
 ﻿   Qt/MSBuild: 3.3.1.1
    Qt: 5.14.2
-  RFIDReader.cpp
+  AdministratorApp.cpp
      Création de la bibliothèque C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.lib et de l'objet C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.exp
 LINK : warning LNK4217: le symbole 'modbus_free' défini dans 'modbus.obj' est importé par 'modbus-rtu.obj' dans la fonction 'modbus_new_rtu'
 LINK : warning LNK4217: le symbole 'modbus_free' défini dans 'modbus.obj' est importé par 'modbus-tcp.obj' dans la fonction '_connect'
