@@ -131,4 +131,4 @@ const box = new Box(1, es1, es2);
 
 // Tests
 console.log("Démarrage des tests...");
-
+box.turnOnThePower()
