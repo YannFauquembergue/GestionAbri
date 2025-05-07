@@ -33,7 +33,7 @@ async function ConnectRFID() {
     try {
       await reader.connect()
   
-      const tag = await reader.readRFIDTag(0, 10)
+      const tag = await reader.readRFIDTag(1000, 10)
       console.log('Tag lu :', tag)
     } catch (err) {
       console.error(err)
@@ -128,6 +128,29 @@ app.get('/getUsers', (req, res) => {
     });
 });
 
+app.delete('/deleteUser/:id', (req, res) => {
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId)) {
+        return res.status(400).json({ error: "ID utilisateur invalide" });
+    }
+
+    console.log(`Tentative de suppression de l'utilisateur ID: ${userId}`);
+    
+    const query = "DELETE FROM Utilisateur WHERE id = ?";
+    bddConnection.query(query, [userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: "Utilisateur non trouvé ou déjà supprimé" });
+        }
+
+        res.json({ message: "Utilisateur supprimé avec succès", id: userId });
+    });
+});
+
+
 app.get('/test', (req, res) => {
     console.log("Route test appelée");
     res.json({ message: "Réception test !" });
@@ -174,5 +197,5 @@ app.post('/addUser', async (req, res) => {
 
 app.listen(port, () => {
     console.log(`Serveur démarré sur le port ${port}`);
-    setInterval(resetQuotasIfNeeded(), 60 * 60 * 1000);
+    setInterval(resetQuotasIfNeeded, 60 * 60 * 1000);
 });

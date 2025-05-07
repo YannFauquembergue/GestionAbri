@@ -6,7 +6,7 @@ class RFIDReader {
     this.host = host
     this.port = port
     this.socket = new net.Socket()
-    this.client = new Modbus.client.TCP(this.socket)
+    this.client = new Modbus.client.TCP(this.socket, 1)
     this.connection = null
   }
 
