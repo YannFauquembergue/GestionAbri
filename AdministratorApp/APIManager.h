@@ -24,6 +24,7 @@ public:
 	User* loadUser(int id);
 	QList<User*> loadUsers();
 	bool saveUser(User*);
+	bool deleteUser(int id);
 
 	QString GetLastAPIError();
 	QString GetErrorDetails();

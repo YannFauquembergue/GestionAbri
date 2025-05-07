@@ -1,15 +1,24 @@
 #include "RFIDReader.h"
 #include <QDebug>
 
-RFIDReader::RFIDReader(QString ip, int port, QObject* parent) : QObject(parent), ip(ip), port(port), ctx(nullptr), isConnected(false)
+RFIDReader::RFIDReader(QString serialPortName, int baudRate = 9600, QObject* parent) : QObject(parent), serialPortName(serialPortName), baudRate(baudRate), ctx(nullptr), isConnected(false)
 {
-    ctx = modbus_new_tcp(ip.toStdString().c_str(), port);
-    if (ctx && modbus_connect(ctx) != -1) {
+    ctx = modbus_new_rtu(serialPortName.toStdString().c_str(), baudRate, 'N', 8, 1);
+    if (!ctx) {
+        qDebug() << "Échec de création du contexte Modbus RTU.";
+        return;
+    }
+
+    modbus_set_slave(ctx, 1);
+
+    if (modbus_connect(ctx) != -1) {
         isConnected = true;
-        qDebug() << "Connexion Modbus TCP réussie au lecteur RFID.";
+        qDebug() << "Connexion Modbus RTU réussie au lecteur RFID sur" << serialPortName;
     }
     else {
-        qDebug() << "Échec de la connexion Modbus TCP : " << modbus_strerror(errno);
+        qDebug() << "Échec de la connexion Modbus RTU :" << modbus_strerror(errno);
+        modbus_free(ctx);
+        ctx = nullptr;
     }
 
     timer = new QTimer(this);

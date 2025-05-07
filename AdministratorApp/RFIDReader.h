@@ -8,8 +8,8 @@ class RFIDReader : public QObject
     Q_OBJECT
 
 private:
-    QString ip;
-    int port;
+    QString serialPortName;
+    int baudRate;
 
     QTimer* timer;
     modbus_t* ctx;

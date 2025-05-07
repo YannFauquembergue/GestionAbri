@@ -143,6 +143,30 @@ bool APIManager::saveUser(User* user)
     return success;
 }
 
+bool APIManager::deleteUser(int id)
+{
+    QNetworkRequest request(QUrl(QString("http://%1:%2/deleteUser/%3").arg(ip).arg(port).arg(id)));
+    QNetworkReply* reply = accessManager->deleteResource(request);
+
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    if (reply->error() == QNetworkReply::NoError) {
+        lastAPIError = "";
+        errorDetails = "";
+        reply->deleteLater();
+        return true;
+    }
+    else {
+        lastAPIError = "DELETE-USER_FAILED";
+        errorDetails = reply->errorString();
+        reply->deleteLater();
+        return false;
+    }
+}
+
+
 QString APIManager::GetLastAPIError()
 {
     return lastAPIError;
