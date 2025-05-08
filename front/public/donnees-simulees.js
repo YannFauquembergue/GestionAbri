@@ -5,7 +5,7 @@ function getRandomFloat(min, max) {
 // Simuler les données
 function generateSimulatedData() {
   return {
-      solar: getRandomFloat(2, 5),  // en kW
+      solar: getRandomFloat(2, 5),
       edf: getRandomFloat(1, 3)
   };
 }
@@ -15,6 +15,6 @@ window.fetchSimulatedEnergyData = function () {
   return new Promise((resolve) => {
       setTimeout(() => {
           resolve(generateSimulatedData());
-      }, 500); // petite latence simulée
+      }, 500);
   });
 };

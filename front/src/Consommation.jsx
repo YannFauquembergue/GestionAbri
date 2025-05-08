@@ -3,7 +3,7 @@ import { fetchSimulatedEnergyData } from './donnees-simulees.js';
 
 function Consommation() {
   const [data, setData] = useState({ edf: 0, solaire: 0 });
-  const useSimulatedData = true; // bascule entre données réelles et simulées
+  const useSimulatedData = true;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,7 +15,7 @@ function Consommation() {
           const response = await fetch('http://localhost:3001/api/consommation');
           result = await response.json();
         }
-        // Harmoniser les noms des clés
+        
         setData({
           edf: result.edf,
           solaire: result.solar || result.solaire || 0
