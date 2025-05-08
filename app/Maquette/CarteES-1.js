@@ -33,10 +33,18 @@ class CarteES {
 
     startSendingData() {
         setInterval(() => {
-            const kwSolaire = Math.floor(Math.random() * 101);
-            const kwEDF = 100 - kwSolaire;
-            this.sendMessage(kwSolaire, kwEDF);
-            console.log(`Envoyé: kwSolaire=${kwSolaire}, kwEDF=${kwEDF}`);
+            // 1. Générer deux consommations réalistes
+            const kwhSolaire = (Math.random() * (5 - 0.5) + 0.5).toFixed(2); // entre 0.5 et 5 kWh
+            const kwhEDF = (Math.random() * (7 - 1) + 1).toFixed(2);         // entre 1 et 7 kWh
+
+            // 2. Calculer les pourcentages
+            const total = parseFloat(kwhSolaire) + parseFloat(kwhEDF);
+            const pourcentageSolaire = ((kwhSolaire / total) * 100).toFixed(1);
+            const pourcentageEDF = ((kwhEDF / total) * 100).toFixed(1);
+
+            // 3. Envoyer les données
+            this.sendMessage(kwhSolaire, khwEDF);
+            console.log(`Envoyé: Solaire=${kwhSolaire}kWh (${pourcentageSolaire}%), EDF=${kwhEDF}kWh (${pourcentageEDF}%)`);
         }, 15000);
     }
 }
