@@ -4,21 +4,83 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Accès Abri</title>
+    <title>Gestion Abri</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="icon" type="image/vnd.icon" href="/favicon.ico">
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <script src='main.js'></script>
+    <script src="donnes-simulees.js"></script>
 </head>
 
 <body>
 
     <div id="title">
         <center>
-                <h1 id="title-text">Accès Abris Vélo</h1>
+                <h1 id="title-text">Gestion Abri Vélo</h1>
         </center>
     </div>
 
+    <div id="dashboard" style="text-align: center;">
+        <h2>Répartition de l'Énergie</h2>
+        <canvas id="energyChart" width="300" height="300"></canvas>
+    
+        <h2>Consommation Globale</h2>
+        <div id="totalConsumption" style="font-size: 2em; font-weight: bold;">-- kW</div>
+    </div>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        let energyChart;
+    
+        async function loadEnergyData() {
+            try {
+                const data = await fetchSimulatedEnergyData(); // Appel simulé
+    
+                const solar = data.solar;
+                const edf = data.edf;
+                const total = solar + edf;
+    
+                // Affichage de la consommation totale
+                document.getElementById('totalConsumption').textContent = total.toFixed(2) + ' kW';
+    
+                const chartData = {
+                    labels: ['Solaire', 'EDF'],
+                    datasets: [{
+                        data: [solar, edf],
+                        backgroundColor: ['#FDB813', '#4D4DFF']
+                    }]
+                };
+    
+                if (energyChart) {
+                    energyChart.data = chartData;
+                    energyChart.update();
+                } else {
+                    const ctx = document.getElementById('energyChart').getContext('2d');
+                    energyChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: chartData,
+                        options: {
+                            responsive: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur de simulation :', error);
+                document.getElementById('totalConsumption').textContent = 'Erreur';
+            }
+        }
+    
+        loadEnergyData();
+        setInterval(loadEnergyData, 10000); // Rafraîchit toutes les 10s
+    </script>    
+    
 </body>
 
 </html>

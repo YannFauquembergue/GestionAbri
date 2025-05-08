@@ -13,3 +13,22 @@ body {
     border: 3px solid burlywood;
     font-family: 'Courier New', Courier, monospace;
 }
+
+#dashboard {
+    margin-top: 40px;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh; /* 80% de la hauteur de la fenêtre */
+    text-align: center;
+}
+
+#energyChart {
+    margin: 20px 0;
+}
+
+#totalConsumption {
+    margin-top: 20px;
+}
