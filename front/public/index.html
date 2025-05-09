@@ -5,39 +5,72 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+    <meta name="description" content="Gestion Abri Vélo" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+    <title>Gestion Abri Vélo</title>
+    <link rel="stylesheet" href="%PUBLIC_URL%/main.css" />
+    <script src="%PUBLIC_URL%/donnees-simulees.js"></script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="title" style="text-align: center;">
+      <h1 id="title-text">Gestion Abri Vélo</h1>
+    </div>
+
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <div id="dashboard" style="text-align: center;">
+      <h2>Répartition de l'Énergie</h2>
+      <canvas id="energyChart" width="300" height="300"></canvas>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+      <h2>Consommation Globale</h2>
+      <div id="totalConsumption" style="font-size: 2em; font-weight: bold;">-- kW</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      let energyChart;
+
+      async function loadEnergyData() {
+        try {
+          const data = await fetchSimulatedEnergyData();
+          const solar = data.solar;
+          const edf = data.edf;
+          const total = solar + edf;
+
+          document.getElementById('totalConsumption').textContent = total.toFixed(2) + ' kW';
+
+          const chartData = {
+            labels: ['Solaire', 'EDF'],
+            datasets: [{
+              data: [solar, edf],
+              backgroundColor: ['#FDB813', '#4D4DFF']
+            }]
+          };
+
+          if (energyChart) {
+            energyChart.data = chartData;
+            energyChart.update();
+          } else {
+            const ctx = document.getElementById('energyChart').getContext('2d');
+            energyChart = new Chart(ctx, {
+              type: 'doughnut',
+              data: chartData,
+              options: {
+                responsive: false,
+                plugins: {
+                  legend: { position: 'bottom' }
+                }
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Erreur de simulation :', error);
+          document.getElementById('totalConsumption').textContent = 'Erreur';
+        }
+      }
+
+      loadEnergyData();
+      setInterval(loadEnergyData, 10000);
+    </script>
   </body>
 </html>
