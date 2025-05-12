@@ -1,10 +1,14 @@
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
+
 const dotenv = require('dotenv');
+
 const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+
+const axios = require('axios');
 
 const RFIDReader = require('./RFIDReader');
 
@@ -25,7 +29,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-const port = 8080;
+const port = process.env.SERVER_PORT;
 
 const reader = new RFIDReader(process.env.RFID_HOST);
 
@@ -69,6 +73,75 @@ async function ConnectRFID() {
 }
   
 ConnectRFID();
+
+async function checkBoxStates() {
+    try {
+        const response = await axios.get('http://localhost:8080/boxes'); // Remplace par ton endpoint temporaire
+        const boxData = response.data;
+
+        const usersToDecrement = [];
+        const boxesToIncrement = [];
+
+        boxData.forEach(box => {
+            if (box.idUser) {
+                usersToDecrement.push(box.idUser);
+            }
+            if (!box.idUser && box.last_userId) {
+                boxesToIncrement.push(box.id);
+            }
+        });
+
+        if (usersToDecrement.length > 0) {
+            await axios.post('http://localhost:8080/decrementQuota', { users: usersToDecrement });
+            console.log(`Quotas décrémentés pour: ${usersToDecrement.join(', ')}`);
+        }
+
+        if (boxesToIncrement.length > 0) {
+            await axios.post('http://localhost:8080/incrementBoxTime', { boxes: boxesToIncrement });
+            console.log(`Temps incrémenté pour les boxes: ${boxesToIncrement.join(', ')}`);
+        }
+
+    } catch (err) {
+        console.error('Erreur dans checkBoxStates:', err.message);
+    }
+}
+
+app.post('/decrementQuota', (req, res) => {
+    const { users } = req.body;
+
+    if (!Array.isArray(users) || users.length === 0) {
+        return res.status(400).json({ error: "Liste d'utilisateurs invalide ou vide" });
+    }
+
+    const query = "UPDATE Utilisateur SET quota = quota - 1 WHERE id IN (?)";
+    bddConnection.query(query, [users], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Quota décrémenté", affected: results.affectedRows });
+    });
+});
+
+
+app.post('/incrementBoxTime', (req, res) => {
+    const { boxes } = req.body;
+
+    if (!Array.isArray(boxes) || boxes.length === 0) {
+        return res.status(400).json({ error: "Liste de box invalide ou vide" });
+    }
+    const getUsersQuery = "SELECT last_userId FROM Box WHERE id IN (?)";
+    bddConnection.query(getUsersQuery, [boxes], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        const userIds = results.map(row => row.last_userId);
+        if (userIds.length === 0) return res.status(404).json({ error: "Aucun utilisateur trouvé" });
+
+        const updateUserQuery = "UPDATE Utilisateur SET temps_energie_renouvelable = IFNULL(temps_energie_renouvelable, 0) + 1 WHERE id IN (?)";
+        bddConnection.query(updateUserQuery, [userIds], (err, updateResults) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: "Temps incrémenté pour les utilisateurs", affected: updateResults.affectedRows });
+        });
+    });
+});
+
 
 const bddConnection = mysql.createConnection({
     host: process.env.BDD_HOST,
@@ -198,4 +271,5 @@ app.post('/addUser', async (req, res) => {
 app.listen(port, () => {
     console.log(`Serveur démarré sur le port ${port}`);
     setInterval(resetQuotasIfNeeded, 60 * 60 * 1000);
+    setInterval(checkBoxStates, 5000);
 });
