@@ -26,20 +26,30 @@ class CarteES {
         });
     }
 
-    sendMessage(kwSolaire, kwEDF) {
-        const message = `${kwSolaire},${kwEDF}`;
-        this.client.write(message);
+    // Simulation des capteurs pour les 8 box
+    readDigitalInputsFromCard() {
+        // Simule 8 entrées numériques avec valeurs aléatoires (0 ou 1)
+        return Array.from({ length: 8 }, () => Math.round(Math.random()));
     }
 
-    startSendingData() {
-        setInterval(() => {
-            const kwSolaire = Math.floor(Math.random() * 101);
-            const kwEDF = 100 - kwSolaire;
-            this.sendMessage(kwSolaire, kwEDF);
-            console.log(`Envoyé: kwSolaire=${kwSolaire}, kwEDF=${kwEDF}`);
-        }, 15000);
+    // Retourne le statut courant de chaque box
+    getBoxesCurrentStatus() {
+        const sensors = this.readDigitalInputsFromCard();
+
+        const statusList = sensors.map((value, index) => ({
+            idBox: index + 1,
+            currentStatus: value === 1
+        }));
+
+        return statusList;
     }
 }
 
+// Utilisation
 const carte = new CarteES("192.168.64.151", 9090);
-carte.startSendingData();
+
+// Exemple d'appel toutes les 10 secondes pour afficher le statut
+setInterval(() => {
+    const status = carte.getBoxesCurrentStatus();
+    console.log("Statut des box :", JSON.stringify(status, null, 2));
+}, 10000);

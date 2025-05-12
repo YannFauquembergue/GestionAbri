@@ -20,6 +20,8 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
+#include <QMessageBox>
+
 #include <QDebug>
 
 class AdministratorApp : public QMainWindow
@@ -53,6 +55,8 @@ public slots:
     void ResetFileUserList();
     void AddUsersFromFileList();
     void LoadUserFile();
+
+    void DeleteUser();
 
     void OpenPort();
 

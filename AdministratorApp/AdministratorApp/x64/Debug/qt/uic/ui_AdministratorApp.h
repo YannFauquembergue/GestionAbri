@@ -53,6 +53,7 @@ public:
     QCheckBox *adminCheckBox;
     QLabel *quotaLabel;
     QSpinBox *quotaSpinBox;
+    QPushButton *deleteUserButton;
     QLabel *logLabel;
     QGroupBox *moduleBox;
     QLabel *moduleLabel;
@@ -114,7 +115,7 @@ public:
         nicknameLabel->setAlignment(Qt::AlignCenter);
         addUserButton = new QPushButton(addUserBox);
         addUserButton->setObjectName(QString::fromUtf8("addUserButton"));
-        addUserButton->setGeometry(QRect(40, 300, 151, 31));
+        addUserButton->setGeometry(QRect(10, 300, 101, 31));
         rfidLineEdit = new QLineEdit(addUserBox);
         rfidLineEdit->setObjectName(QString::fromUtf8("rfidLineEdit"));
         rfidLineEdit->setGeometry(QRect(10, 230, 101, 21));
@@ -153,6 +154,9 @@ public:
         quotaSpinBox->setGeometry(QRect(80, 270, 81, 22));
         quotaSpinBox->setMaximum(9999);
         quotaSpinBox->setValue(600);
+        deleteUserButton = new QPushButton(addUserBox);
+        deleteUserButton->setObjectName(QString::fromUtf8("deleteUserButton"));
+        deleteUserButton->setGeometry(QRect(120, 300, 101, 31));
         logLabel = new QLabel(centralWidget);
         logLabel->setObjectName(QString::fromUtf8("logLabel"));
         logLabel->setGeometry(QRect(10, 350, 221, 21));
@@ -207,6 +211,7 @@ public:
         label = new QLabel(loadUsersBox);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(50, 30, 261, 21));
+        label->setAlignment(Qt::AlignCenter);
         rfidLogList = new QListWidget(centralWidget);
         rfidLogList->setObjectName(QString::fromUtf8("rfidLogList"));
         rfidLogList->setGeometry(QRect(410, 370, 371, 181));
@@ -240,6 +245,7 @@ public:
         QObject::connect(loadFileButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(LoadUserFile()));
         QObject::connect(saveFileUsersButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(AddUsersFromFileList()));
         QObject::connect(resetFileListButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(ResetFileUserList()));
+        QObject::connect(deleteUserButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(DeleteUser()));
 
         QMetaObject::connectSlotsByName(AdministratorAppClass);
     } // setupUi
@@ -247,7 +253,7 @@ public:
     void retranslateUi(QMainWindow *AdministratorAppClass)
     {
         AdministratorAppClass->setWindowTitle(QCoreApplication::translate("AdministratorAppClass", "AdministratorApp", nullptr));
-        addUserBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Ajouter/Modifier un utilisateur", nullptr));
+        addUserBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Gestion utilisateur", nullptr));
         nomLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Nom", nullptr));
         nomLineEdit->setText(QString());
         prenomLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Pr\303\251nom", nullptr));
@@ -263,6 +269,7 @@ public:
 
         adminCheckBox->setText(QCoreApplication::translate("AdministratorAppClass", "Admin ?", nullptr));
         quotaLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Quota (Par d\303\251faut: 600)", nullptr));
+        deleteUserButton->setText(QCoreApplication::translate("AdministratorAppClass", "Supprimer", nullptr));
         logLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Log", nullptr));
         moduleBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Module USB", nullptr));
         moduleLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Port", nullptr));

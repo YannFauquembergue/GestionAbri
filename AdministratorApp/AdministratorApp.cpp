@@ -150,6 +150,7 @@ void AdministratorApp::OnUserComboSelect(int i)
         ui.nicknameLineEdit->setText(user->getNickname());
         ui.rfidLineEdit->setText(user->getRFID());
         ui.passwordLineEdit->clear();
+        ui.adminCheckBox->setChecked(user->getIsAdmin());
     }
     else
     {
@@ -159,6 +160,7 @@ void AdministratorApp::OnUserComboSelect(int i)
         ui.nicknameLineEdit->clear();
         ui.rfidLineEdit->clear();
         ui.passwordLineEdit->clear();
+        ui.adminCheckBox->setChecked(false);
     }
 }
 
@@ -208,17 +210,17 @@ void AdministratorApp::AddUsersFromFileList()
         User* user = new User(prenom, nom, nickname, rfid, password, isAdmin, quota);
 
         if (api->saveUser(user)) {
-            AddElementToLogList("Utilisateur ajoute: " + nickname);
-            ++usersAdded;
+            AddElementToLogList("Utilisateur ajoute/mis a jour: " + nickname);
+            usersAdded++;
         }
         else {
-            AddElementToLogList("ERREUR: Echec de l'ajout de " + nickname);
+            AddElementToLogList("ERREUR: Echec de l'ajout/la mise a jour de " + nickname);
         }
 
         delete user;
     }
 
-    AddElementToLogList(QString::number(usersAdded) + " utilisateur(s) ajoute(s) depuis le fichier.");
+    AddElementToLogList(QString::number(usersAdded) + " utilisateur(s) ajoute(s)/mis a jour depuis le fichier.");
     FetchUsers(); // Rafraîchir la liste après ajout
 }
 
@@ -268,6 +270,39 @@ void AdministratorApp::LoadUserFile()
     file.close();
     AddElementToLogList(QString::number(row) + " utilisateurs charges depuis le fichier.");
 }
+
+// Fonction pour supprimer un utilisateur
+void AdministratorApp::DeleteUser()
+{
+    int index = ui.userCombo->currentIndex();
+    if (index <= 0 || users.isEmpty()) {
+        AddElementToLogList("Aucun utilisateur selectionne pour la suppression.");
+        return;
+    }
+
+    User* user = users[index - 1];
+    int userId = user->getId();
+    QString userName = user->getNickname();
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirmation",
+        "Voulez-vous vraiment supprimer l'utilisateur '" + userName + "' ?",
+        QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        if (api->deleteUser(userId)) {
+            AddElementToLogList("Utilisateur '" + userName + "' supprime avec succes.");
+            FetchUsers();
+        }
+        else {
+            AddElementToLogList("ERREUR: Echec de la suppression de l'utilisateur '" + userName + "': " + api->GetErrorDetails());
+        }
+    }
+    else {
+        AddElementToLogList("Suppression annulee.");
+    }
+}
+
 
 // Fonction slot pour ouvrir le port sélectionné sur l'application
 void AdministratorApp::OpenPort()
