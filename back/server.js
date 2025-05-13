@@ -76,7 +76,7 @@ ConnectRFID();
 
 async function checkBoxStates() {
     try {
-        const response = await axios.get('http://localhost:8080/boxes'); // Remplace par ton endpoint temporaire
+        const response = await axios.get('http://localhost:8080/boxes');
         const boxData = response.data;
 
         const usersToDecrement = [];
@@ -105,6 +105,21 @@ async function checkBoxStates() {
         console.error('Erreur dans checkBoxStates:', err.message);
     }
 }
+
+app.get('/boxes', (req, res) => {
+    const query = "SELECT id, startDate, idUser, last_userId FROM Box";
+
+    bddConnection.query(query, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        const boxes = results.map(box => ({
+            ...box,
+            startDate: box.startDate.toISOString().split('T')[0]
+        }));
+
+        res.json(boxes);
+    });
+});
 
 app.post('/decrementQuota', (req, res) => {
     const { users } = req.body;
@@ -271,5 +286,5 @@ app.post('/addUser', async (req, res) => {
 app.listen(port, () => {
     console.log(`Serveur démarré sur le port ${port}`);
     setInterval(resetQuotasIfNeeded, 60 * 60 * 1000);
-    setInterval(checkBoxStates, 5000);
+    setInterval(checkBoxStates, 60 * 1000);
 });
