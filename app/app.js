@@ -1,15 +1,22 @@
 const net = require("net");
+const readline = require("readline");
 
-// Classe pour la carte ES1 permettant d'écrire sur un Output (sortie)
+// Interface utilisateur
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+// Classe pour la carte ES1
 class CarteES1 {
     constructor(ip, port) {
         this.ip = ip;
         this.port = port;
         this.TCPClient = new net.Socket();
+        this.TCPClient.setEncoding('utf8');
         this.TCPClient.connect(port, ip, () => {
             console.log(`Connecté à la carte ES1 sur ${ip}:${port}`);
         });
-
         this.TCPClient.on("error", (err) => {
             console.error("Erreur de connexion ES1:", err.message);
         });
@@ -17,56 +24,47 @@ class CarteES1 {
 
     writeOutput(id, value) {
         const message = `${id},${value ? 1 : 0}\n`;
-        this.TCPClient.write(message, (err) => {
-            if (err) {
-                console.error("Erreur d'envoi de données ES1:", err);
-            } else {
-                console.log(`Commande envoyée à ES1: ${message.trim()}`);
-            }
-        });
+        this.TCPClient.write(message);
+    }
+
+    close() {
+        this.TCPClient.end();
     }
 }
 
-// Classe pour la carte ES2 permettant de lire l'état des différentes Input (Actionneur ou Capteur)
+// Classe pour la carte ES2
 class CarteES2 {
     constructor(ip, port) {
         this.ip = ip;
         this.port = port;
         this.TCPClient = new net.Socket();
+        this.TCPClient.setEncoding('utf8');
         this.TCPClient.connect(port, ip, () => {
             console.log(`Connecté à la carte ES2 sur ${ip}:${port}`);
         });
-
         this.TCPClient.on("error", (err) => {
             console.error("Erreur de connexion ES2:", err.message);
         });
     }
 
     readState(id, callback) {
-        this.TCPClient.write(`READ,${id}\n`, (err) => {
-            if (err) {
-                console.error("Erreur d'envoi de requête ES2:", err);
-            } else {
-                console.log(`Requête envoyée à ES2: READ,${id}`);
-            }
-        });
-
+        this.TCPClient.write(`READ,${id}\n`);
         this.TCPClient.once("data", (data) => {
-            console.log(`Réponse reçue de ES2: ${data.toString().trim()}`);
-            callback(data.toString().trim() === "1");
+            callback(data.trim() === "1");
         });
+    }
+
+    close() {
+        this.TCPClient.end();
     }
 }
 
+// Classe Box
 class Box {
     constructor(id, es1, es2) {
         this.id = id;
         this.ES1 = es1;
         this.ES2 = es2;
-    }
-
-    assignUser(user) {
-        this.user = user;
     }
 
     openTheDoor() {
@@ -100,35 +98,60 @@ class Box {
     }
 
     getDoorState(callback) {
-        this.ES2.readState(1, (state) => {
-            console.log(`État de la porte: ${state ? "Ouverte" : "Fermée"}`);
-            callback(state);
-        });
+        this.ES2.readState(1, callback);
+    }
+
+    getLightState(callback) {
+        this.ES2.readState(2, callback);
     }
 
     getPowerConsumptionState(callback) {
-        this.ES2.readState(2, (state) => {
-            console.log(`Consommation électrique: ${state ? "Active" : "Inactive"}`);
-            callback(state);
-        });
+        this.ES2.readState(3, callback);
+    }
+
+    close() {
+        this.ES1.close();
+        this.ES2.close();
     }
 
     static loadAllBoxes() {
-        return [new Box(1, new CarteES1("192.168.1.100", 12345), new CarteES2("192.168.1.101", 12346))];
+        return [new Box(1, new CarteES1("127.0.0.1", 12345), new CarteES2("127.0.0.1", 12346))];
     }
 }
 
-// Définition des IP et ports pour la simulation
-const IP_ES1 = "127.0.0.1";
-const PORT_ES1 = 12345;
-const IP_ES2 = "127.0.0.1";
-const PORT_ES2 = 12346;
+// Création de la box
+const box = Box.loadAllBoxes()[0];
 
-// Création des instances simulées
-const es1 = new CarteES1(IP_ES1, PORT_ES1);
-const es2 = new CarteES2(IP_ES2, PORT_ES2);
-const box = new Box(1, es1, es2);
+function showMenu() {
+    console.log('\n=== Menu Box ===');
+    console.log('1. Ouvrir la porte');
+    console.log('2. Fermer la porte');
+    console.log('3. Allumer la lumière');
+    console.log('4. Éteindre la lumière');
+    console.log('5. Activer l’alimentation');
+    console.log('6. Désactiver l’alimentation');
+    console.log('7. Quitter');
+    rl.question('Choix : ', handleMenu);
+}
 
-// Tests
-console.log("Démarrage des tests...");
-box.turnOnThePower()
+function handleMenu(choice) {
+    switch (choice) {
+        case '1': box.openTheDoor(); break;
+        case '2': box.closeTheDoor(); break;
+        case '3': box.switchOnTheLight(); break;
+        case '4': box.turnOffTheLight(); break;
+        case '5': box.turnOnThePower(); break;
+        case '6': box.turnOffThePower(); break;
+        case '7':
+            rl.close();
+            box.close();
+            console.log("Déconnexion...");
+            return;
+        default:
+            console.log('Choix invalide');
+    }
+    setTimeout(showMenu, 200);
+}
+
+// Lancement
+showMenu();
