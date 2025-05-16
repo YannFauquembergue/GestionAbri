@@ -29,17 +29,27 @@ class RFIDReader {
     console.log('Déconnecté du lecteur RFID')
   }
 
-  async readRFIDTag(register = 0, length = 10) {
-    try {
-      const resp = await this.client.readHoldingRegisters(register, length)
-      const buffer = Buffer.from(resp.response._body._valuesAsBuffer)
-      const tag = buffer.toString('utf8').replace(/\0/g, '')
-      return tag
-    } catch (err) {
-      console.error('Erreur lors de la lecture du tag:', err)
-      throw err
+async readRFIDTag(register = 0, length = 15) {
+  try {
+    const resp = await this.client.readHoldingRegisters(register, length)
+    const buffer = Buffer.from(resp.response._body._valuesAsBuffer)
+
+    const trimmed = buffer.filter(b => b !== 0x00)
+
+    if (trimmed.length === 0) {
+      return null 
     }
+    const text = Buffer.from(trimmed).toString('utf8')
+    if (/^[\x20-\x7E]+$/.test(text)) {
+      return text
+    }
+
+    return Buffer.from(trimmed).toString('hex').toUpperCase().match(/.{1,2}/g).join(' ')
+  } catch (err) {
+    console.error('Erreur lors de la lecture du tag:', err)
+    throw err
   }
+}
 
   async writeCommand(register, values) {
     try {

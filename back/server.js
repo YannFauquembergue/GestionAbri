@@ -37,8 +37,20 @@ async function ConnectRFID() {
     try {
       await reader.connect()
   
-      const tag = await reader.readRFIDTag(1000, 10)
-      console.log('Tag lu :', tag)
+      let lastTag = null;
+
+      setInterval(async () => {
+      try {
+        const tag = await reader.readRFIDTag(0,20)
+
+        if (tag && tag.length > 0 && tag !== lastTag) {
+          console.log('Tag détecté : ', tag)
+          lastTag = tag
+        }
+      } catch (err) {
+        console.error('Erreur de lecture RFID :', err)
+      }
+    }, 2000)
     } catch (err) {
       console.error(err)
     }
