@@ -31,23 +31,27 @@ class RFIDReader {
 
 async readRFIDTag(register = 0, length = 15) {
   try {
-    const resp = await this.client.readHoldingRegisters(register, length)
-    const buffer = Buffer.from(resp.response._body._valuesAsBuffer)
+  const resp = await this.client.readHoldingRegisters(register, length)
+  const buffer = Buffer.from(resp.response._body._valuesAsBuffer)
+  const trimmed = buffer.filter(b => b !== 0x00)
+  if (trimmed.length === 0) return null
 
-    const trimmed = buffer.filter(b => b !== 0x00)
+  // Vérifier si c'est la valeur par défaut (54 78 02 01)
+  const defaultHex = '54 78 02 01'
+  const hexText = Buffer.from(trimmed).toString('hex').toUpperCase().match(/.{1,2}/g).join(' ')
+  if (hexText === defaultHex) {
+    return null
+  }
 
-    if (trimmed.length === 0) {
-      return null 
-    }
-    const text = Buffer.from(trimmed).toString('utf8')
-    if (/^[\x20-\x7E]+$/.test(text)) {
-      return text
-    }
+  const text = Buffer.from(trimmed).toString('utf8')
+  if (/^[\x20-\x7E]+$/.test(text)) {
+    return text
+  }
 
-    return Buffer.from(trimmed).toString('hex').toUpperCase().match(/.{1,2}/g).join(' ')
+  return hexText
   } catch (err) {
-    console.error('Erreur lors de la lecture du tag:', err)
-    throw err
+  console.error('Erreur lors de la lecture du tag:', err)
+  throw err
   }
 }
 
