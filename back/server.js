@@ -33,6 +33,7 @@ const port = process.env.SERVER_PORT;
 
 const reader = new RFIDReader(process.env.RFID_HOST);
 
+// Fonction pour établir la connexion au lecteur RFID TCP
 async function ConnectRFID() {
     try {
       await reader.connect()
@@ -56,6 +57,7 @@ async function ConnectRFID() {
     }
   }
 
+  // Fonction pour réinitialiser les quotas si nécessaire
  async function resetQuotasIfNeeded() {
     const now = new Date();
     const isMondayAt2AM = now.getDay() === 1 && now.getHours() === 2;
@@ -86,6 +88,7 @@ async function ConnectRFID() {
   
 ConnectRFID();
 
+// Fonction pour vérifier l'état des box, puis décrémenter le capital des utilisateurs concernés
 async function checkBoxStates() {
     try {
         const response = await axios.get('http://localhost:8080/boxes');
@@ -118,6 +121,7 @@ async function checkBoxStates() {
     }
 }
 
+// Route pour récupérer les box
 app.get('/boxes', (req, res) => {
     const query = "SELECT id, startDate, idUser, last_userId FROM Box";
 
@@ -169,7 +173,7 @@ app.post('/incrementBoxTime', (req, res) => {
     });
 });
 
-
+// Etablissement de la connexion à la base de données
 const bddConnection = mysql.createConnection({
     host: process.env.BDD_HOST,
     database: process.env.BDD_DATABASE,
@@ -182,6 +186,7 @@ bddConnection.connect((err) => {
     console.log("Connexion à la BDD établie");
 });
 
+// Constante pour vérification par token
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
     if (!token) return res.status(403).json({ error: "Accès refusé, token manquant" });
@@ -193,6 +198,7 @@ const verifyToken = (req, res, next) => {
     });
 };
 
+// Route pour récupérer un utilisateur par id
 app.get('/getUser/:id', verifyToken, (req, res) => {
     const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
@@ -212,6 +218,7 @@ app.get('/getUser/:id', verifyToken, (req, res) => {
     });
 });
 
+// Route pour récupérer tous les utilisateurs de la base de données
 app.get('/getUsers', (req, res) => {
     console.log("Tentative de récupération de tous les utilisateurs");
     
@@ -228,6 +235,7 @@ app.get('/getUsers', (req, res) => {
     });
 });
 
+// Route pour supprimer un utilisateur sélectionné par id
 app.delete('/deleteUser/:id', (req, res) => {
     const userId = parseInt(req.params.id);
     if (isNaN(userId)) {
@@ -250,12 +258,32 @@ app.delete('/deleteUser/:id', (req, res) => {
     });
 });
 
+// Vérification de l'accès d'un utilisateur par id RFID
+app.get('/checkAccess/:rfid/', (req, res) => {
+    const userRFID = parseInt(req.params.rfid);
+    if (isNaN(userRFID)) {
+        return res.status(400).json({ error: "RFID utilisateur invalide" });
+    }
+    const query = "SELECT quota FROM Utilisateur WHERE rfid = ?";
+    bddConnection.query(query, [userRFID], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
+        const quota = results[0];
+        res.json(quota);
+    });
+});
 
+// Route de test
 app.get('/test', (req, res) => {
     console.log("Route test appelée");
     res.json({ message: "Réception test !" });
 });
 
+// Route poru ajouter un utilisateur
 app.post('/addUser', async (req, res) => {
     console.log("Tentative d'ajout ou mise à jour d'un utilisateur");
     
@@ -295,6 +323,7 @@ app.post('/addUser', async (req, res) => {
     }
 });
 
+// Mettre le serveur en écoute sur le port sélectionné
 app.listen(port, () => {
     console.log(`Serveur démarré sur le port ${port}`);
     setInterval(resetQuotasIfNeeded, 60 * 60 * 1000);
