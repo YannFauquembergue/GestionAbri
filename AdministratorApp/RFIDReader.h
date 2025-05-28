@@ -7,23 +7,22 @@ class RFIDReader : public QObject
 {
     Q_OBJECT
 
-private:
-    QString serialPortName;
-    int baudRate;
-
-    QTimer* timer;
-    modbus_t* ctx;
-    bool isConnected;
-
 public:
-    RFIDReader(QString ip, int port, QObject* parent = nullptr);
+    explicit RFIDReader(QString serialPortName, int baudRate = 9600, QObject* parent = nullptr);
     ~RFIDReader();
 
     bool IsReaderConnected();
 
-public slots:
+signals:
+    void onRFIDRead(QString rfid);
+
+private slots:
     void readData();
 
-signals:
-    void onRFIDRead(QString data);
+private:
+    QString serialPortName;
+    int baudRate;
+    modbus_t* ctx;
+    bool isConnected;
+    QTimer* timer;
 };

@@ -35,11 +35,11 @@ static const qt_meta_stringdata_RFIDReader_t qt_meta_stringdata_RFIDReader = {
 QT_MOC_LITERAL(0, 0, 10), // "RFIDReader"
 QT_MOC_LITERAL(1, 11, 10), // "onRFIDRead"
 QT_MOC_LITERAL(2, 22, 0), // ""
-QT_MOC_LITERAL(3, 23, 4), // "data"
+QT_MOC_LITERAL(3, 23, 4), // "rfid"
 QT_MOC_LITERAL(4, 28, 8) // "readData"
 
     },
-    "RFIDReader\0onRFIDRead\0\0data\0readData"
+    "RFIDReader\0onRFIDRead\0\0rfid\0readData"
 };
 #undef QT_MOC_LITERAL
 
@@ -60,7 +60,7 @@ static const uint qt_meta_data_RFIDReader[] = {
        1,    1,   24,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       4,    0,   27,    2, 0x0a /* Public */,
+       4,    0,   27,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString,    3,

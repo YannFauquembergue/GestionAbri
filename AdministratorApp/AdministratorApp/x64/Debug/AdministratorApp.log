@@ -1,6 +1,11 @@
 ﻿   Qt/MSBuild: 3.3.1.1
    Qt: 5.14.2
+  moc RFIDReader.h
   AdministratorApp.cpp
+  RFIDReader.cpp
+  main.cpp
 C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\AdministratorApp.cpp(106,34): warning C4129: « - » : séquence d’échappement de caractères non reconnue
 C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\AdministratorApp.cpp(106,34): warning C4129: « s » : séquence d’échappement de caractères non reconnue
+  moc_AdministratorApp.cpp
+  moc_RFIDReader.cpp
   AdministratorApp.vcxproj -> C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.exe

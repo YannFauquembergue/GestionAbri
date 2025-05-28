@@ -309,19 +309,15 @@ void AdministratorApp::OpenPort()
 {
     if (ui.moduleCombo->currentIndex() >= 0)
     {
-        port = new QSerialPort(ui.moduleCombo->currentText());
-        QObject::connect(port, SIGNAL(readyRead()), this, SLOT(OnSerialPortReadyRead()));
-        port->setBaudRate(QSerialPort::Baud9600);
-        port->setDataBits(QSerialPort::DataBits::Data8);
-        port->setParity(QSerialPort::Parity::NoParity);
-        port->setStopBits(QSerialPort::StopBits::OneStop);
-        if (port->open(QIODevice::OpenModeFlag::ExistingOnly | QIODevice::OpenModeFlag::ReadWrite))
+        QString portName = ui.moduleCombo->currentText();
+        rfidReader = new RFIDReader(portName, 9600); // 9600 est la valeur par défaut dans ta classe
+        if (rfidReader->IsReaderConnected())
         {
-            AddElementToLogList("Port " + port->portName() + " ouvert !");
+            AddElementToLogList("Lecteur RFID en marche sur " + portName + " !");
         }
         else
         {
-            AddElementToLogList("Echec de l'ouverture du port");
+            AddElementToLogList("Échec de la connexion au lecteur RFID.");
         }
     }
 }
