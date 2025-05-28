@@ -259,21 +259,55 @@ app.delete('/deleteUser/:id', (req, res) => {
 });
 
 // Vérification de l'accès d'un utilisateur par id RFID
-app.get('/checkAccess/:rfid/', (req, res) => {
+app.get('/checkAccess/:rfid/', async (req, res) => {
     const userRFID = parseInt(req.params.rfid);
     if (isNaN(userRFID)) {
         return res.status(400).json({ error: "RFID utilisateur invalide" });
     }
-    const query = "SELECT quota FROM Utilisateur WHERE rfid = ?";
-    bddConnection.query(query, [userRFID], (err, results) => {
+
+    const userQuery = "SELECT id, quota, last_acces_to_box FROM Utilisateur WHERE rfid = ?";
+    bddConnection.query(userQuery, [userRFID], async (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        if (results.affectedRows === 0) {
+        if (results.length === 0) {
             return res.status(404).json({ error: "Utilisateur non trouvé" });
         }
-        const quota = results[0];
-        res.json(quota);
+
+        const { id: userId, quota, last_acces_to_box } = results[0];
+
+        const currentTime = new Date();
+        const lastAccess = new Date(last_acces_to_box);
+        const diffHours = (currentTime - lastAccess) / (1000 * 60 * 60);
+
+        if (diffHours > process.env.PERM_ACCESS_TIME) {
+            return res.status(403).json({
+                error: `Accès refusé : plus de ${process.env.PERM_ACCESS_TIME}h depuis le dernier accès.`,
+                quota
+            });
+        }
+
+        // Vérification de présence dans un box
+        try {
+            const response = await axios.get('http://localhost:8080/boxes');
+            const boxes = response.data;
+
+            const currentBox = boxes.find(box => box.idUser === userId);
+            if (currentBox) {
+                // L'utilisateur est déjà dans un box — déclencher procédure de "retrait de vélo"
+                return res.status(200).json({
+                    message: "L'utilisateur est déjà dans un box, retrait de vélo nécessaire.",
+                    boxId: currentBox.id,
+                    quota
+                });
+            } else {
+                // Utilisateur autorisé
+                return res.status(200).json({ message: "Accès autorisé", quota });
+            }
+        } catch (apiErr) {
+            console.error('Erreur lors de l’appel à l’API des boxes:', apiErr.message);
+            return res.status(500).json({ error: "Erreur interne (API boxes indisponible)" });
+        }
     });
 });
 

@@ -43,7 +43,7 @@ class CarteES {
             const pourcentageEDF = ((kwhEDF / total) * 100).toFixed(1);
 
             // 3. Envoyer les données
-            this.sendMessage(kwhSolaire, khwEDF);
+            this.sendMessage(kwhSolaire, kwhEDF);
             console.log(`Envoyé: Solaire=${kwhSolaire}kWh (${pourcentageSolaire}%), EDF=${kwhEDF}kWh (${pourcentageEDF}%)`);
         }, 15000);
     }
