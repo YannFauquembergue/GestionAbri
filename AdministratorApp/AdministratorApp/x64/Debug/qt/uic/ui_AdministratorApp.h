@@ -55,10 +55,6 @@ public:
     QSpinBox *quotaSpinBox;
     QPushButton *deleteUserButton;
     QLabel *logLabel;
-    QGroupBox *moduleBox;
-    QLabel *moduleLabel;
-    QComboBox *moduleCombo;
-    QPushButton *openPortButton;
     QGroupBox *loadUsersBox;
     QPushButton *loadFileButton;
     QTableWidget *fileUsersList;
@@ -76,7 +72,7 @@ public:
     {
         if (AdministratorAppClass->objectName().isEmpty())
             AdministratorAppClass->setObjectName(QString::fromUtf8("AdministratorAppClass"));
-        AdministratorAppClass->resize(789, 617);
+        AdministratorAppClass->resize(614, 617);
         centralWidget = new QWidget(AdministratorAppClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         logList = new QListWidget(centralWidget);
@@ -160,19 +156,6 @@ public:
         logLabel = new QLabel(centralWidget);
         logLabel->setObjectName(QString::fromUtf8("logLabel"));
         logLabel->setGeometry(QRect(10, 350, 221, 21));
-        moduleBox = new QGroupBox(centralWidget);
-        moduleBox->setObjectName(QString::fromUtf8("moduleBox"));
-        moduleBox->setGeometry(QRect(610, 10, 171, 341));
-        moduleLabel = new QLabel(moduleBox);
-        moduleLabel->setObjectName(QString::fromUtf8("moduleLabel"));
-        moduleLabel->setGeometry(QRect(10, 30, 151, 21));
-        moduleLabel->setAlignment(Qt::AlignCenter);
-        moduleCombo = new QComboBox(moduleBox);
-        moduleCombo->setObjectName(QString::fromUtf8("moduleCombo"));
-        moduleCombo->setGeometry(QRect(10, 50, 151, 31));
-        openPortButton = new QPushButton(moduleBox);
-        openPortButton->setObjectName(QString::fromUtf8("openPortButton"));
-        openPortButton->setGeometry(QRect(30, 90, 111, 21));
         loadUsersBox = new QGroupBox(centralWidget);
         loadUsersBox->setObjectName(QString::fromUtf8("loadUsersBox"));
         loadUsersBox->setGeometry(QRect(250, 10, 351, 341));
@@ -214,7 +197,7 @@ public:
         label->setAlignment(Qt::AlignCenter);
         rfidLogList = new QListWidget(centralWidget);
         rfidLogList->setObjectName(QString::fromUtf8("rfidLogList"));
-        rfidLogList->setGeometry(QRect(410, 370, 371, 181));
+        rfidLogList->setGeometry(QRect(410, 370, 191, 181));
         rfidLogList->setAutoScroll(true);
         rfidLogList->setMovement(QListView::Static);
         rfidLogList->setProperty("isWrapping", QVariant(false));
@@ -228,7 +211,7 @@ public:
         AdministratorAppClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(AdministratorAppClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 789, 20));
+        menuBar->setGeometry(QRect(0, 0, 614, 20));
         AdministratorAppClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(AdministratorAppClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -241,7 +224,6 @@ public:
         QObject::connect(addUserButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(AddUser()));
         QObject::connect(userCombo, SIGNAL(currentIndexChanged(int)), AdministratorAppClass, SLOT(OnUserComboSelect(int)));
         QObject::connect(refreshComboButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(RefreshUserCombo()));
-        QObject::connect(openPortButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(OpenPort()));
         QObject::connect(loadFileButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(LoadUserFile()));
         QObject::connect(saveFileUsersButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(AddUsersFromFileList()));
         QObject::connect(resetFileListButton, SIGNAL(clicked()), AdministratorAppClass, SLOT(ResetFileUserList()));
@@ -271,9 +253,6 @@ public:
         quotaLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Quota (Par d\303\251faut: 600)", nullptr));
         deleteUserButton->setText(QCoreApplication::translate("AdministratorAppClass", "Supprimer", nullptr));
         logLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Log", nullptr));
-        moduleBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Module USB", nullptr));
-        moduleLabel->setText(QCoreApplication::translate("AdministratorAppClass", "Port", nullptr));
-        openPortButton->setText(QCoreApplication::translate("AdministratorAppClass", "Ouvrir port", nullptr));
         loadUsersBox->setTitle(QCoreApplication::translate("AdministratorAppClass", "Charger des utilisateurs", nullptr));
         loadFileButton->setText(QCoreApplication::translate("AdministratorAppClass", "Charger fichier", nullptr));
         QTableWidgetItem *___qtablewidgetitem = fileUsersList->horizontalHeaderItem(0);

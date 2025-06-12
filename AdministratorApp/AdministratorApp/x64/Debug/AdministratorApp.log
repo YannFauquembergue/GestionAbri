@@ -1,11 +1,19 @@
-﻿   Qt/MSBuild: 3.3.1.1
+﻿   Qt/MSBuild: 3.4.0.1
    Qt: 5.14.2
-  moc RFIDReader.h
   AdministratorApp.cpp
-  RFIDReader.cpp
-  main.cpp
-C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\AdministratorApp.cpp(106,34): warning C4129: « - » : séquence d’échappement de caractères non reconnue
-C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\AdministratorApp.cpp(106,34): warning C4129: « s » : séquence d’échappement de caractères non reconnue
+C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\AdministratorApp.cpp(107,34): warning C4129: « - » : séquence d’échappement de caractères non reconnue
+C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\AdministratorApp.cpp(107,34): warning C4129: « s » : séquence d’échappement de caractères non reconnue
   moc_AdministratorApp.cpp
-  moc_RFIDReader.cpp
+     Création de la bibliothèque C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.lib et de l'objet C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.exp
+LINK : warning LNK4217: le symbole 'modbus_free' défini dans 'modbus.obj' est importé par 'modbus-rtu.obj' dans la fonction 'modbus_new_rtu'
+LINK : warning LNK4217: le symbole 'modbus_free' défini dans 'modbus.obj' est importé par 'modbus-tcp.obj' dans la fonction '_connect'
+LINK : warning LNK4286: le symbole 'modbus_free' défini dans 'modbus.obj' est importé par 'RFIDReader.obj'
+LINK : warning LNK4217: le symbole 'modbus_set_bits_from_bytes' défini dans 'modbus-data.obj' est importé par 'modbus.obj' dans la fonction 'modbus_reply'
+LINK : warning LNK4217: le symbole 'modbus_set_slave' défini dans 'modbus.obj' est importé par 'RFIDReader.obj' dans la fonction '"public: __cdecl RFIDReader::RFIDReader(class QString,int,class QObject *)" (??0RFIDReader@@QEAA@VQString@@HPEAVQObject@@@Z)'
+LINK : warning LNK4217: le symbole 'modbus_connect' défini dans 'modbus.obj' est importé par 'RFIDReader.obj' dans la fonction '"public: __cdecl RFIDReader::RFIDReader(class QString,int,class QObject *)" (??0RFIDReader@@QEAA@VQString@@HPEAVQObject@@@Z)'
+LINK : warning LNK4217: le symbole 'modbus_close' défini dans 'modbus.obj' est importé par 'RFIDReader.obj' dans la fonction '"public: virtual __cdecl RFIDReader::~RFIDReader(void)" (??1RFIDReader@@UEAA@XZ)'
+LINK : warning LNK4217: le symbole 'modbus_strerror' défini dans 'modbus.obj' est importé par 'RFIDReader.obj' dans la fonction '"public: __cdecl RFIDReader::RFIDReader(class QString,int,class QObject *)" (??0RFIDReader@@QEAA@VQString@@HPEAVQObject@@@Z)'
+LINK : warning LNK4217: le symbole 'modbus_read_registers' défini dans 'modbus.obj' est importé par 'RFIDReader.obj' dans la fonction '"private: void __cdecl RFIDReader::readData(void)" (?readData@RFIDReader@@AEAAXXZ)'
+LINK : warning LNK4217: le symbole 'modbus_write_register' défini dans 'modbus.obj' est importé par 'RFIDReader.obj' dans la fonction '"private: void __cdecl RFIDReader::readData(void)" (?readData@RFIDReader@@AEAAXXZ)'
+LINK : warning LNK4217: le symbole 'modbus_new_rtu' défini dans 'modbus-rtu.obj' est importé par 'RFIDReader.obj' dans la fonction '"public: __cdecl RFIDReader::RFIDReader(class QString,int,class QObject *)" (??0RFIDReader@@QEAA@VQString@@HPEAVQObject@@@Z)'
   AdministratorApp.vcxproj -> C:\Users\Yann Fauquembergue\source\repos\YannFauquembergue\GestionAbri\AdministratorApp\x64\Debug\AdministratorApp.exe

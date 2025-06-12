@@ -54,10 +54,11 @@ void AdministratorApp::GetRFIDInfo(QString info)
 // Fonction pour lister les ports disponibles
 void AdministratorApp::ListAvailablePorts()
 {
+    /*
     ui.moduleCombo->clear();
     foreach(const QSerialPortInfo &portInfo, QSerialPortInfo::availablePorts()) {
         ui.moduleCombo->addItem(portInfo.portName());
-    }
+    }*/
 }
 
 // Fonction pour récupérer les utilisateurs de la BDD et les listers
@@ -307,6 +308,7 @@ void AdministratorApp::DeleteUser()
 // Fonction slot pour ouvrir le port sélectionné sur l'application
 void AdministratorApp::OpenPort()
 {
+    /*
     if (ui.moduleCombo->currentIndex() >= 0)
     {
         QString portName = ui.moduleCombo->currentText();
@@ -320,6 +322,7 @@ void AdministratorApp::OpenPort()
             AddElementToLogList("Échec de la connexion au lecteur RFID.");
         }
     }
+    */
 }
 
 // Fonction slot pour lire les informations du port ouvert

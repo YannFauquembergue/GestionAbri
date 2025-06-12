@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>789</width>
+    <width>614</width>
     <height>617</height>
    </rect>
   </property>
@@ -328,58 +328,6 @@
      <string>Log</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="moduleBox">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>10</y>
-      <width>171</width>
-      <height>341</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Module USB</string>
-    </property>
-    <widget class="QLabel" name="moduleLabel">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>151</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Port</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="moduleCombo">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>50</y>
-       <width>151</width>
-       <height>31</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="openPortButton">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>90</y>
-       <width>111</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Ouvrir port</string>
-     </property>
-    </widget>
-   </widget>
    <widget class="QGroupBox" name="loadUsersBox">
     <property name="geometry">
      <rect>
@@ -511,7 +459,7 @@
      <rect>
       <x>410</x>
       <y>370</y>
-      <width>371</width>
+      <width>191</width>
       <height>181</height>
      </rect>
     </property>
@@ -556,7 +504,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>789</width>
+     <width>614</width>
      <height>20</height>
     </rect>
    </property>
@@ -621,22 +569,6 @@
     <hint type="destinationlabel">
      <x>324</x>
      <y>298</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>openPortButton</sender>
-   <signal>clicked()</signal>
-   <receiver>AdministratorAppClass</receiver>
-   <slot>OpenPort()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>365</x>
-     <y>152</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>364</x>
-     <y>218</y>
     </hint>
    </hints>
   </connection>
