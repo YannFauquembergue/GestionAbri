@@ -31,27 +31,37 @@ class RFIDReader {
 
 async readRFIDTag(register = 0, length = 15) {
   try {
-  const resp = await this.client.readHoldingRegisters(register, length)
-  const buffer = Buffer.from(resp.response._body._valuesAsBuffer)
-  const trimmed = buffer.filter(b => b !== 0x00)
-  if (trimmed.length === 0) return null
+    const resp = await this.client.readHoldingRegisters(register, length)
+    const buffer = Buffer.from(resp.response._body._valuesAsBuffer)
 
-  // Vérifier si c'est la valeur par défaut (54 78 02 01)
-  const defaultHex = '54 78 02 01'
-  const hexText = Buffer.from(trimmed).toString('hex').toUpperCase().match(/.{1,2}/g).join(' ')
-  if (hexText === defaultHex) {
-    return null
-  }
+    // Supprimer les octets nuls
+    const filtered = Array.from(buffer).filter(b => b !== 0x00)
+    if (filtered.length === 0) return null
 
-  const text = Buffer.from(trimmed).toString('utf8')
-  if (/^[\x20-\x7E]+$/.test(text)) {
-    return text
-  }
+    // Supprimer la séquence 54 78 02 01 si elle est à la fin
+    const defaultSequence = [0x54, 0x78, 0x02, 0x01]
+    const endsWithDefault = defaultSequence.every((val, i) => 
+      filtered[filtered.length - defaultSequence.length + i] === val
+    )
+    if (endsWithDefault) {
+      filtered.splice(-4)
+    }
 
-  return hexText
+    if (filtered.length === 0) return null
+
+    const cleanedBuffer = Buffer.from(filtered)
+
+    // Essayer de décoder comme texte UTF-8
+    const text = cleanedBuffer.toString('utf8')
+    if (/^[\x20-\x7E]+$/.test(text)) {
+      return text
+    }
+
+    // Retourner en hex sans espaces
+    return cleanedBuffer.toString('hex').toUpperCase()
   } catch (err) {
-  console.error('Erreur lors de la lecture du tag:', err)
-  throw err
+    console.error('Erreur lors de la lecture du tag:', err)
+    throw err
   }
 }
 

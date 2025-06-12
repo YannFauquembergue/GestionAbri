@@ -15,10 +15,10 @@ class CarteETHIO32 {
         this.TCPClient = new net.Socket();
         this.TCPClient.setEncoding('utf8');
         this.TCPClient.connect(port, ip, () => {
-            console.log(`✅ Connecté à la carte ETH-IO32 sur ${ip}:${port}`);
+            console.log(`Connecté à la carte ETH-IO32 sur ${ip}:${port}`);
         });
         this.TCPClient.on("error", (err) => {
-            console.error("❌ Erreur de connexion :", err.message);
+            console.error("Erreur de connexion :", err.message);
         });
     }
 

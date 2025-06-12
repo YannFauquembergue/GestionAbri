@@ -38,20 +38,28 @@ async function ConnectRFID() {
     try {
       await reader.connect()
   
-      let lastTag = null;
+    let lastTag = null;
 
-      setInterval(async () => {
-      try {
-        const tag = await reader.readRFIDTag(0,20)
+    setInterval(async () => {
+        try {
+            const tag = await reader.readRFIDTag(0, 20);
 
-        if (tag && tag.length > 0 && tag !== lastTag) {
-          console.log('Tag détecté : ', tag)
-          lastTag = tag
+            if (tag && tag.length > 0 && tag !== lastTag) {
+            console.log('Tag détecté : ', tag);
+            lastTag = tag;
+
+            // Appel de l’API /checkAccess
+            try {
+                const response = await axios.get(`http://localhost:${port}/checkAccess/${tag}`);
+                console.log('Réponse checkAccess:', response.data);
+            } catch (apiErr) {
+                console.error('Erreur checkAccess:', apiErr.response?.data || apiErr.message);
+            }
+            }
+        } catch (err) {
+            console.error('Erreur de lecture RFID :', err);
         }
-      } catch (err) {
-        console.error('Erreur de lecture RFID :', err)
-      }
-    }, 2000)
+        }, 2000);
     } catch (err) {
       console.error(err)
     }
@@ -135,6 +143,37 @@ app.get('/boxes', (req, res) => {
 
         res.json(boxes);
     });
+});
+
+app.post('/updateBoxUser', (req, res) => {
+    const { id, idUser } = req.body;
+
+    if (typeof id !== 'number') {
+        return res.status(400).json({ error: "ID de box invalide" });
+    }
+
+    const query = "UPDATE Box SET idUser = ? WHERE id = ?";
+    bddConnection.query(query, [idUser ?? null, id], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Box non trouvé" });
+        }
+
+        res.json({ message: `Box ${id} mis à jour avec idUser=${idUser}` });
+    });
+});
+
+app.post('/openBox', (req, res) => {
+    const { id } = req.body;
+
+    if (typeof id !== 'number') {
+        return res.status(400).json({ error: "ID de box invalide" });
+    }
+
+    // Simulation de l'ouverture du box
+    console.log(`Ouverture simulée du box ${id}`);
+    res.json({ message: `Box ${id} ouvert (simulation)` });
 });
 
 app.post('/decrementQuota', (req, res) => {
@@ -258,8 +297,7 @@ app.delete('/deleteUser/:id', (req, res) => {
     });
 });
 
-// Vérification de l'accès d'un utilisateur par id RFID
-app.get('/checkAccess/:rfid/', async (req, res) => {
+app.get('/checkAccess/:rfid', async (req, res) => {
     const userRFID = parseInt(req.params.rfid);
     if (isNaN(userRFID)) {
         return res.status(400).json({ error: "RFID utilisateur invalide" });
@@ -270,6 +308,7 @@ app.get('/checkAccess/:rfid/', async (req, res) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
+
         if (results.length === 0) {
             return res.status(404).json({ error: "Utilisateur non trouvé" });
         }
@@ -280,34 +319,47 @@ app.get('/checkAccess/:rfid/', async (req, res) => {
         const lastAccess = new Date(last_acces_to_box);
         const diffHours = (currentTime - lastAccess) / (1000 * 60 * 60);
 
-        if (diffHours > process.env.PERM_ACCESS_TIME) {
+        const allowedDelay = parseFloat(process.env.PERM_ACCESS_TIME || "24"); // par défaut 24h
+        if (diffHours > allowedDelay) {
             return res.status(403).json({
-                error: `Accès refusé : plus de ${process.env.PERM_ACCESS_TIME}h depuis le dernier accès.`,
+                error: `Accès refusé : plus de ${allowedDelay}h depuis le dernier accès.`,
                 quota
             });
         }
 
-        // Vérification de présence dans un box
-        try {
-            const response = await axios.get('http://localhost:8080/boxes');
-            const boxes = response.data;
+        // Rechercher un box disponible dans la base de données
+        const boxQuery = "SELECT id FROM Box WHERE idUser IS NULL LIMIT 1";
+        bddConnection.query(boxQuery, async (boxErr, boxResults) => {
+            if (boxErr) {
+                return res.status(500).json({ error: boxErr.message });
+            }
 
-            const currentBox = boxes.find(box => box.idUser === userId);
-            if (currentBox) {
-                // L'utilisateur est déjà dans un box — déclencher procédure de "retrait de vélo"
+            if (boxResults.length === 0) {
+                return res.status(503).json({ error: "Aucun box disponible pour le dépôt de vélo" });
+            }
+
+            const availableBoxId = boxResults[0].id;
+
+            try {
+                // Mise à jour du box via l'API
+                await axios.post('http://localhost:8080/updateBoxUser', {
+                    id: availableBoxId,
+                    idUser: userId
+                });
+
+                // Ouverture du box
+                await axios.post('http://localhost:8080/openBox', { id: availableBoxId });
+
                 return res.status(200).json({
-                    message: "L'utilisateur est déjà dans un box, retrait de vélo nécessaire.",
-                    boxId: currentBox.id,
+                    message: "Vélo déposé avec succès, box ouvert",
+                    boxId: availableBoxId,
                     quota
                 });
-            } else {
-                // Utilisateur autorisé
-                return res.status(200).json({ message: "Accès autorisé", quota });
+            } catch (updateErr) {
+                console.error("Erreur mise à jour/ouverture box :", updateErr.message);
+                return res.status(500).json({ error: "Erreur lors de la procédure de dépôt" });
             }
-        } catch (apiErr) {
-            console.error('Erreur lors de l’appel à l’API des boxes:', apiErr.message);
-            return res.status(500).json({ error: "Erreur interne (API boxes indisponible)" });
-        }
+        });
     });
 });
 

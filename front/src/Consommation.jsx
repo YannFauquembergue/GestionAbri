@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchSimulatedEnergyData } from './donnees-simulees.js';
+// import { fetchSimulatedEnergyData } from './donnees-simulees.js';
 
 function Consommation() {
   const [data, setData] = useState({ edf: 0, solaire: 0 });
@@ -28,7 +28,7 @@ function Consommation() {
     fetchData();
     const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [useSimulatedData]);
 
   return (
     <div>
