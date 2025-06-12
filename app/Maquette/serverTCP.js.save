@@ -8,11 +8,11 @@ class TCPServer {
     constructor(port) {
         this.port = port;
         this.bddConnection = mysql.createConnection({
-        host: "192.168.64.151",
-            database: "Abri",
-            user: "abriUser",
-            password: "Pewpew020305???!"
-        });
+            host: ",
+            database: process.env.BDD_DATABASE,
+            user: process.env.BDD_USER,
+            password: process.env.BDD_PASSWORD
+       });
 
         this.bddConnection.connect((err) => {
             if (err) {
